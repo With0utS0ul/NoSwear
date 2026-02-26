@@ -2,7 +2,7 @@ using UnityEngine;
 
 [RequireComponent(typeof(CharacterController))]
 [RequireComponent(typeof(Animator))]
-public class PlayerController : MonoBehaviour
+public class Movement : MonoBehaviour
 {
     [Header("Характеристики")]
     public PlayerStats stats;
