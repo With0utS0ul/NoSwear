@@ -5,7 +5,8 @@ using UnityEngine;
 public class Movement : MonoBehaviour
 {
     [Header("Характеристики")]
-    public PlayerStats stats;
+    
+    public Characters_Stats.PlayerStats mk_Stats;
 
     [Header("Настройки движения")]
     public float walkSpeed = 5f;
@@ -45,6 +46,7 @@ public class Movement : MonoBehaviour
 
     private void Awake()
     {
+        if (mk_Stats == null) mk_Stats = new Characters_Stats.PlayerStats();
         controller = GetComponent<CharacterController>();
         animator = GetComponent<Animator>();
         mainCamera = Camera.main;
@@ -59,7 +61,7 @@ public class Movement : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
 
-        if (stats != null) stats.ResetStats();
+        if (mk_Stats != null) mk_Stats.ResetStats();
     }
 
     private void Update()
@@ -143,13 +145,13 @@ public class Movement : MonoBehaviour
 
     private void PerformMeleeAttack()
     {
-        Debug.Log("Удар мечом! Урон: " + stats.physicalDamage);
+        Debug.Log("Удар мечом! Урон: " + mk_Stats.physicalDamage);
         animator.SetTrigger(attackMeleeHash);
     }
 
     private void PerformMagicAttack()
     {
-        Debug.Log("Магический удар! Урон: " + stats.magicDamage);
+        Debug.Log("Магический удар! Урон: " + mk_Stats.magicDamage);
         animator.SetTrigger(attackMagicHash);
     }
 
@@ -157,10 +159,10 @@ public class Movement : MonoBehaviour
     {
         if (isDead || isStunned) return;
 
-        stats.currentHP -= damage;
-        Debug.Log($"Получен урон: {damage}. Осталось HP: {stats.currentHP}");
+        mk_Stats.currentHP -= damage;
+        Debug.Log($"Получен урон: {damage}. Осталось HP: {mk_Stats.currentHP}");
 
-        if (stats.currentHP <= 0)
+        if (mk_Stats.currentHP <= 0)
         {
             Die();
         }
@@ -201,16 +203,3 @@ public class Movement : MonoBehaviour
     }
 }
 
-[System.Serializable]
-public class PlayerStats
-{
-    public float maxHP = 100f;
-    [HideInInspector] public float currentHP = 100f;
-    public float physicalDamage = 10f;
-    public float magicDamage = 25f;
-
-    public void ResetStats()
-    {
-        currentHP = maxHP;
-    }
-}
