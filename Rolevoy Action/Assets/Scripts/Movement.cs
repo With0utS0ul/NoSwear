@@ -4,9 +4,20 @@ using UnityEngine;
 [RequireComponent(typeof(Animator))]
 public class Movement : MonoBehaviour
 {
-    [Header("Характеристики")]
+    [SerializeField] private Canvas lose;
     
     public Characters_Stats.PlayerStats mk_Stats;
+   
+
+    [Header("Настройки магической атаки")]
+    public GameObject projectilePrefab; // Префаб снаряда
+    public Transform firePoint; // Точка выстрела (перетащите в инспекторе)
+    public float projectileSpeed = 20f;
+    public float fireCooldown = 1f; // Перезарядка между выстрелами
+    public float projectileDamage = 15f;
+
+    private float lastFireTime = 0f;
+
 
     [Header("Настройки движения")]
     public float walkSpeed = 5f;
@@ -139,7 +150,36 @@ public class Movement : MonoBehaviour
 
         if (Input.GetButtonDown("Fire2"))
         {
+            // Проверка перезарядки
+            if (Time.time < lastFireTime + fireCooldown) return;
+
+            lastFireTime = Time.time;
+
             PerformMagicAttack();
+            
+            // Вот здесь необходимо создать эту логику.
+            
+            if (projectilePrefab != null)
+            {
+                // Определяем точку спавна
+                Vector3 spawnPosition = firePoint != null ?
+                    firePoint.position :
+                    transform.position + transform.forward * 1.5f + Vector3.up * 1f;
+
+                // Создаём снаряд
+                GameObject projectile = Instantiate(projectilePrefab, spawnPosition, Quaternion.identity);
+
+                // Настраиваем снаряд
+                Projectile projScript = projectile.GetComponent<Projectile>();
+                if (projScript != null)
+                {
+                    projScript.Init(transform.forward); // Направление полёта
+                    projScript.speed = projectileSpeed;
+                }
+
+                // Поворачиваем снаряд в сторону полёта (визуально)
+                projectile.transform.rotation = Quaternion.LookRotation(transform.forward);
+            }
         }
     }
 
@@ -165,6 +205,9 @@ public class Movement : MonoBehaviour
         if (mk_Stats.currentHP <= 0)
         {
             Die();
+            lose.gameObject.SetActive(true);
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
         }
         else
         {
@@ -172,7 +215,7 @@ public class Movement : MonoBehaviour
         }
     }
 
-    private void GetHit()
+    public void GetHit()
     {
         isStunned = true;
         stunTimer = 0.5f;
@@ -188,7 +231,7 @@ public class Movement : MonoBehaviour
         }
     }
 
-    private void Die()
+    public void Die()
     {
         isDead = true;
         animator.SetTrigger(deathHash);

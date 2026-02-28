@@ -9,7 +9,9 @@ public class Characters_Stats : MonoBehaviour
         public float physicalDamage = 10f;
         public float magicDamage = 25f;
         public string mk_Tag = "MK";  //MainKarkusha
-        public string mk_spear_Tag = "MK_spear";  
+        public string mk_spear_Tag = "MK_spear";
+        public string mk_magic_Tag = "MK_magic";
+        
 
         public void ResetStats()
         {
