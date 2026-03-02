@@ -44,22 +44,22 @@ public class EnemyAI : MonoBehaviour
 
                 _aiDestinationSetter.target = _roamTarget.transform;
                 TryFindPlayer();
-                _enemyAnimator.Iswalking();
-                //_enemyAnimator.Iswalking(true);
-                //_enemyAnimator.Isrunning(false);
+                
+                _enemyAnimator.Iswalking(true);
+                _enemyAnimator.Isrunning(false);
                 _aiPath.maxSpeed = 3;
                 break;
             case EnemyStates.Following:
                 _aiDestinationSetter.target = _player.transform;
-                //_enemyAnimator.Iswalking(false);
-                //_enemyAnimator.Isrunning(true);
-                _enemyAnimator.Isrunning();
+                _enemyAnimator.Iswalking(false);
+                _enemyAnimator.Isrunning(true);
+                
                 _aiPath.maxSpeed = 3;
                 if
                 (Vector3.Distance(gameObject.transform.position, _player.transform.position) < _enemyAttack.AttackRange)
                 {
-                    //_enemyAnimator.Iswalking(false);
-                   // _enemyAnimator.Isrunning(false);
+                    _enemyAnimator.Iswalking(false);
+                    _enemyAnimator.Isrunning(false);
                    
                     if (_enemyAttack.CanAttack)
                     {

@@ -6,22 +6,22 @@ public class EnemyAnimator : MonoBehaviour
 {
     [SerializeField] private Animator _animator;
     private static readonly int Attack = Animator.StringToHash(name: "Attack");
-    private static readonly int Run = Animator.StringToHash(name: "Isrunning");
-    private static readonly int Walk = Animator.StringToHash(name: "Iswalking");
+    private static readonly int Run = Animator.StringToHash(name: "Isrunning 0");
+    private static readonly int Walk = Animator.StringToHash(name: "Iswalking 0");
     public void PlayAttack()
     {
         _animator.SetTrigger(id: Attack);
 
     }
-    public void Isrunning()//bool condition)
+    public void Isrunning(bool condition)
     {
-        //_animator.SetBool(id: Run, condition);
-        _animator.SetTrigger(id: Run);
+        _animator.SetBool(id: Run, condition);
+        
     }
-    public void Iswalking()//bool condition)
+    public void Iswalking(bool condition)
     {
-        //_animator.SetBool(id: Walk, condition);
-        _animator.SetTrigger(id: Walk);
+        _animator.SetBool(id: Walk, condition);
+        
     }
 
 
