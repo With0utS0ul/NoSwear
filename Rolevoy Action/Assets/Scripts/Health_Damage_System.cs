@@ -3,17 +3,18 @@ using UnityEngine.UI;
 
 public class Health_Damage_System : MonoBehaviour
 {
+   
     public Characters_Stats.Spider spider_Stats;
     public Characters_Stats.Maga maga_Stats;
     public Characters_Stats.PlayerStats mk_Stats;
-    public Animator animator;
+    private Animator animator;
 
     [Header("UI")]
     [SerializeField] private Transform stats_Canvas;
     [SerializeField] private Slider hp_Slider;
 
     [Header("Ссылки на компоненты")]
-    [SerializeField] private Movement movement; // 🎯 Ссылка на скрипт движения/анимации
+    [SerializeField] private Movement movement; // Ссылка на скрипт движения/анимации
 
     private Transform cam;
     private int role = 0;
@@ -102,11 +103,12 @@ public class Health_Damage_System : MonoBehaviour
         {
             if (attackerTag == mk_Stats.mk_spear_Tag)
             {
+                animator.SetTrigger("Hit");
                 spider_Stats.currentHP -= mk_Stats.physicalDamage;
                 hp_Slider.value = spider_Stats.currentHP;
                 if (hp_Slider.value == 0)
                 {
-                    animator.SetTrigger("isDead");
+                    //animator.SetTrigger("isDead");
                     character.SetActive(false);
                 }
 
@@ -114,11 +116,12 @@ public class Health_Damage_System : MonoBehaviour
             }
             else if (attackerTag == mk_Stats.mk_magic_Tag)
             {
+                animator.SetTrigger("Hit");
                 spider_Stats.currentHP -= mk_Stats.magicDamage;
                 hp_Slider.value = spider_Stats.currentHP;
                 if (hp_Slider.value == 0)
                 {
-                    animator.SetTrigger("isDead");
+                    //animator.SetTrigger("isDead");
                     character.SetActive(false);
                 }
 
@@ -129,12 +132,12 @@ public class Health_Damage_System : MonoBehaviour
         {
             if (attackerTag == mk_Stats.mk_spear_Tag)
             {
-                animator.SetTrigger("6");
+                animator.SetTrigger("GetDamage");
                 maga_Stats.currentHP -= mk_Stats.physicalDamage;
                 hp_Slider.value = maga_Stats.currentHP;
                 if (hp_Slider.value == 0)
                 {
-                    animator.SetTrigger("7");
+                    //animator.SetTrigger("7");
                     character.SetActive(false);
                 }
                 
@@ -142,12 +145,12 @@ public class Health_Damage_System : MonoBehaviour
             }
             else if (attackerTag == mk_Stats.mk_magic_Tag) 
             {
-                animator.SetTrigger("6");
+                animator.SetTrigger("GetDamage");
                 maga_Stats.currentHP -= mk_Stats.magicDamage;
                 hp_Slider.value = maga_Stats.currentHP;
                 if (hp_Slider.value == 0)
                 {
-                    animator.SetTrigger("7");
+                    //animator.SetTrigger("7");
                     character.SetActive(false);
                 }
             }

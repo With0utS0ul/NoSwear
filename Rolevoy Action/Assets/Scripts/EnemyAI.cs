@@ -1,7 +1,8 @@
-/*using Pathfinding;
+using Pathfinding;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using UnityEditor.PackageManager;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -23,6 +24,7 @@ public class EnemyAI : MonoBehaviour
     private void Start()
     {
         _player = FindObjectOfType<Movement>();
+        
         _currentState = EnemyStates.Roaming;
         _roamPosition = GenerateRoamPosition();
     }
@@ -42,6 +44,7 @@ public class EnemyAI : MonoBehaviour
 
                 _aiDestinationSetter.target = _roamTarget.transform;
                 TryFindPlayer();
+                
                 _enemyAnimator.Iswalking(true);
                 _enemyAnimator.Isrunning(false);
                 _aiPath.maxSpeed = 3;
@@ -50,12 +53,14 @@ public class EnemyAI : MonoBehaviour
                 _aiDestinationSetter.target = _player.transform;
                 _enemyAnimator.Iswalking(false);
                 _enemyAnimator.Isrunning(true);
+                
                 _aiPath.maxSpeed = 3;
                 if
                 (Vector3.Distance(gameObject.transform.position, _player.transform.position) < _enemyAttack.AttackRange)
                 {
                     _enemyAnimator.Iswalking(false);
                     _enemyAnimator.Isrunning(false);
+                   
                     if (_enemyAttack.CanAttack)
                     {
                         _enemyAttack.TryAttackPlayer();
@@ -105,4 +110,3 @@ public class EnemyAI : MonoBehaviour
 }
 
 
-*/

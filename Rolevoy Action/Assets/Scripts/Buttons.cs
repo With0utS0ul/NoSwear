@@ -8,7 +8,7 @@ public class Buttons : MonoBehaviour
     public void ExitButton()
     {
         Application.Quit();
-        Debug.Log("ВыхоД");
+        Debug.Log("ВЫХОД");
     }
 
     public void Restart()
