@@ -13,13 +13,15 @@ public class EnemyAnimator : MonoBehaviour
         _animator.SetTrigger(id: Attack);
 
     }
-    public void Isrunning(bool condition)
+    public void Isrunning()//bool condition)
     {
-        _animator.SetBool(id: Run, condition);
+        //_animator.SetBool(id: Run, condition);
+        _animator.SetTrigger(id: Run);
     }
-    public void Iswalking(bool condition)
+    public void Iswalking()//bool condition)
     {
-        _animator.SetBool(id: Walk, condition);
+        //_animator.SetBool(id: Walk, condition);
+        _animator.SetTrigger(id: Walk);
     }
 
 
