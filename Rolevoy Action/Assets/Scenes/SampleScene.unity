@@ -1033,8 +1033,8 @@ MonoBehaviour:
   enemyPrefab: {fileID: 2253665573529291982, guid: 17f2c92d28258c5449307b65cb07d44c, type: 3}
   minX: -10
   maxX: 10
-  minY: 20
-  maxY: 30
+  minY: 10
+  maxY: 20
   height: 1
 --- !u!114 &540169930
 MonoBehaviour:
