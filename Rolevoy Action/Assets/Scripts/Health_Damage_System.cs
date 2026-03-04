@@ -14,14 +14,14 @@ public class Health_Damage_System : MonoBehaviour
     [SerializeField] private Slider hp_Slider;
 
     [Header("Ссылки на компоненты")]
-    [SerializeField] private Movement movement; // Ссылка на скрипт движения/анимации
+    private Movement movement; // Ссылка на скрипт движения/анимации
 
     private Transform cam;
     private int role = 0;
     private GameObject character;
 
-    // 🎯 Событие для обновления UI извне (опционально)
-    public System.Action<float, float> OnHealthChanged;
+    
+  
 
     void Awake()
     {
@@ -29,7 +29,7 @@ public class Health_Damage_System : MonoBehaviour
         if (spider_Stats == null) spider_Stats = new Characters_Stats.Spider();
         if (maga_Stats == null) maga_Stats = new Characters_Stats.Maga();
 
-        // 🎯 Автоматически находим Movement, если не назначен в инспекторе
+        // Автоматически находим Movement, если не назначен в инспекторе
         if (movement == null)
             movement = GetComponent<Movement>();
     }

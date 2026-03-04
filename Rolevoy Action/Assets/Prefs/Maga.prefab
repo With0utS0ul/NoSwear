@@ -588,6 +588,18 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 400224, guid: b9e17ef56044b2f40884aee1d8a7e1cd, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1.1827
+      objectReference: {fileID: 0}
+    - target: {fileID: 400224, guid: b9e17ef56044b2f40884aee1d8a7e1cd, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1.1827
+      objectReference: {fileID: 0}
+    - target: {fileID: 400224, guid: b9e17ef56044b2f40884aee1d8a7e1cd, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1.1827
+      objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: b9e17ef56044b2f40884aee1d8a7e1cd, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
@@ -641,6 +653,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 100002, guid: b9e17ef56044b2f40884aee1d8a7e1cd, type: 3}
       insertIndex: -1
       addedObject: {fileID: 7837597580581599452}
+    - targetCorrespondingSourceObject: {fileID: 100002, guid: b9e17ef56044b2f40884aee1d8a7e1cd, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 6160311644444527917}
   m_SourcePrefab: {fileID: 100100000, guid: b9e17ef56044b2f40884aee1d8a7e1cd, type: 3}
 --- !u!4 &2219300198646061536 stripped
 Transform:
@@ -666,7 +681,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   stats_Canvas: {fileID: 5661818409567189904}
   hp_Slider: {fileID: 5132033734458921992}
-  movement: {fileID: 0}
 --- !u!136 &6087819883393732302
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -773,7 +787,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 92607f47aebb6d146a0083c36fa62026, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _minWalkableDistance: 1
+  _minWalkableDistance: 2
   _maxWalkableDistance: 10
   _reachedPointDistance: 2
   _roamTarget: {fileID: 6973329336057844228}
@@ -808,8 +822,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 37dbee3afe54f1942919ec02a339c31d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _attackRange: 2
-  coolDown: 2
+  _attackRange: 5
+  coolDown: 1
 --- !u!114 &7837597580581599452
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -852,6 +866,33 @@ MonoBehaviour:
   slowWhenNotFacingTarget: 1
   whenCloseToDestination: 0
   constrainInsideGraph: 0
+--- !u!54 &6160311644444527917
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2219300198646482368}
+  serializedVersion: 4
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 0
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!95 &2219300198655882754 stripped
 Animator:
   m_CorrespondingSourceObject: {fileID: 9500000, guid: b9e17ef56044b2f40884aee1d8a7e1cd, type: 3}
