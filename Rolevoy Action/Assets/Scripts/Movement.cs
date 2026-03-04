@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 [RequireComponent(typeof(CharacterController))]
 [RequireComponent(typeof(Animator))]
@@ -13,10 +14,18 @@ public class Movement : MonoBehaviour
     public GameObject projectilePrefab; // Префаб снаряда
     public Transform firePoint; // Точка выстрела (перетащите в инспекторе)
     public float projectileSpeed = 20f;
-    public float fireCooldown = 1f; // Перезарядка между выстрелами
+    public float fireCooldown = 3f; // Перезарядка между выстрелами
     public float projectileDamage = 15f;
 
     private float lastFireTime = 0f;
+
+    [Header("UI: Иконки магической атаки")]
+    public UnityEngine.UI.Image iconMagicReady;    // Иконка "готова" (по умолчанию видна)
+    public UnityEngine.UI.Image iconMagicCooldown;  // Иконка "кулдаун" (скрыта по умолчанию)
+    public UnityEngine.UI.Image iconCooldownFill;   // Опционально: заполнение кулдауна (Mask или Slider)
+    public Text cooldownText; // Опционально: текст с обратным отсчётом
+
+    private bool isMagicOnCooldown = false;
 
 
     [Header("Настройки движения")]
@@ -73,6 +82,9 @@ public class Movement : MonoBehaviour
         Cursor.visible = false;
 
         if (mk_Stats != null) mk_Stats.ResetStats();
+
+        if (iconMagicReady != null) iconMagicReady.gameObject.SetActive(true);
+        if (iconMagicCooldown != null) iconMagicCooldown.gameObject.SetActive(false);
     }
 
     private void Update()
@@ -89,6 +101,7 @@ public class Movement : MonoBehaviour
         }
 
         UpdateAnimator();
+        UpdateMagicCooldownUI();
     }
 
     private void HandleCameraRotation()
@@ -154,33 +167,77 @@ public class Movement : MonoBehaviour
             if (Time.time < lastFireTime + fireCooldown) return;
 
             lastFireTime = Time.time;
-
             PerformMagicAttack();
-            
-            // Вот здесь необходимо создать эту логику.
-            
+
+            // === ЛОГИКА СМЕНЫ ИКОНОК ===
+            StartMagicCooldownUI();
+
             if (projectilePrefab != null)
             {
-                // Определяем точку спавна
                 Vector3 spawnPosition = firePoint != null ?
                     firePoint.position :
                     transform.position + transform.forward * 1.5f + Vector3.up * 1f;
 
-                // Создаём снаряд
                 GameObject projectile = Instantiate(projectilePrefab, spawnPosition, Quaternion.identity);
-
-                // Настраиваем снаряд
                 Projectile projScript = projectile.GetComponent<Projectile>();
                 if (projScript != null)
                 {
-                    projScript.Init(transform.forward); // Направление полёта
+                    projScript.Init(transform.forward);
                     projScript.speed = projectileSpeed;
                 }
-
-                // Поворачиваем снаряд в сторону полёта (визуально)
                 projectile.transform.rotation = Quaternion.LookRotation(transform.forward);
             }
         }
+    }
+
+    private void StartMagicCooldownUI()
+    {
+        isMagicOnCooldown = true;
+
+        // Переключаем иконки
+        if (iconMagicReady != null) iconMagicReady.gameObject.SetActive(false);
+        if (iconMagicCooldown != null) iconMagicCooldown.gameObject.SetActive(true);
+
+        // Сбрасываем визуал заполнения, если есть
+        if (iconCooldownFill != null)
+            iconCooldownFill.fillAmount = 1f; // Полное заполнение в начале кулдауна
+    }
+
+    private void UpdateMagicCooldownUI()
+    {
+        if (!isMagicOnCooldown) return;
+
+        float cooldownElapsed = Time.time - lastFireTime;
+        float cooldownProgress = Mathf.Clamp01(cooldownElapsed / fireCooldown);
+
+        // Обновляем заполнение (если используется Image с типом Filled)
+        if (iconCooldownFill != null)
+        {
+            iconCooldownFill.fillAmount = 1f - cooldownProgress;
+        }
+
+        // Обновляем текст таймера (опционально)
+        if (cooldownText != null)
+        {
+            float remaining = Mathf.Max(0f, fireCooldown - cooldownElapsed);
+            cooldownText.text = remaining.ToString("F1"); // "2.3"
+        }
+
+        // Если кулдаун закончился — возвращаем иконку "готова"
+        if (cooldownElapsed >= fireCooldown)
+        {
+            EndMagicCooldownUI();
+        }
+    }
+
+    private void EndMagicCooldownUI()
+    {
+        isMagicOnCooldown = false;
+
+        if (iconMagicReady != null) iconMagicReady.gameObject.SetActive(true);
+        if (iconMagicCooldown != null) iconMagicCooldown.gameObject.SetActive(false);
+
+        if (cooldownText != null) cooldownText.text = "";
     }
 
     private void PerformMeleeAttack()
