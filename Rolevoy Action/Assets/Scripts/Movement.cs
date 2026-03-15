@@ -3,27 +3,27 @@ using UnityEngine.UI;
 
 [RequireComponent(typeof(CharacterController))]
 [RequireComponent(typeof(Animator))]
+[RequireComponent(typeof(HealthComp))]
 public class Movement : MonoBehaviour
 {
     [SerializeField] private Canvas lose;
-    
-    public Characters_Stats.PlayerStats mk_Stats;
-   
 
+    public PlayerStats mk_Stats { get; private set; }
+
+    private HealthComp health;
     [Header("Настройки магической атаки")]
-    public GameObject projectilePrefab; // Префаб снаряда
-    public Transform firePoint; // Точка выстрела (перетащите в инспекторе)
+    public GameObject projectilePrefab;
+    public Transform firePoint;
     public float projectileSpeed = 20f;
-    public float fireCooldown = 3f; // Перезарядка между выстрелами
+    public float fireCooldown = 3f;
     public float projectileDamage = 15f;
 
     private float lastFireTime = 0f;
 
     [Header("UI: Иконки магической атаки")]
-    public UnityEngine.UI.Image iconMagicReady;    // Иконка "готова" (по умолчанию видна)
-    public UnityEngine.UI.Image iconMagicCooldown;  // Иконка "кулдаун" (скрыта по умолчанию)
-    public UnityEngine.UI.Image iconCooldownFill;   // Опционально: заполнение кулдауна (Mask или Slider)
-    public Text cooldownText; // Опционально: текст с обратным отсчётом
+    public UnityEngine.UI.Image iconMagicReady;
+    public UnityEngine.UI.Image iconMagicCooldown;
+    public Text cooldownText;
 
     private bool isMagicOnCooldown = false;
 
@@ -41,7 +41,7 @@ public class Movement : MonoBehaviour
     public float maxCameraAngle = 85f;
 
     [Header("Настройки анимации")]
-    public float animSmoothSpeed = 10f; // Сглаживание перехода между анимациями
+    public float animSmoothSpeed = 10f;
 
     private CharacterController controller;
     private Animator animator;
@@ -53,11 +53,9 @@ public class Movement : MonoBehaviour
     private bool isStunned = false;
     private float stunTimer = 0f;
 
-    // Переменные для плавности анимации
     private float currentAnimSpeed = 0f;
     private float targetAnimSpeed = 0f;
 
-    // Хэш параметров
     private int speedHash;
     private int attackMeleeHash;
     private int attackMagicHash;
@@ -66,12 +64,11 @@ public class Movement : MonoBehaviour
 
     private void Awake()
     {
-        if (mk_Stats == null) mk_Stats = new Characters_Stats.PlayerStats();
+        health = GetComponent<HealthComp>();
         controller = GetComponent<CharacterController>();
         animator = GetComponent<Animator>();
         mainCamera = Camera.main;
 
-        // Инициализация хэшей
         speedHash = Animator.StringToHash("Speed");
         attackMeleeHash = Animator.StringToHash("AttackMelee");
         attackMagicHash = Animator.StringToHash("AttackMagic");
@@ -81,10 +78,37 @@ public class Movement : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
 
+        if (mk_Stats == null) mk_Stats = new PlayerStats();
+        mk_Stats.Initialize(health);
         if (mk_Stats != null) mk_Stats.ResetStats();
+        mk_Stats.OnDeath += HandleDeath;
+
+
 
         if (iconMagicReady != null) iconMagicReady.gameObject.SetActive(true);
         if (iconMagicCooldown != null) iconMagicCooldown.gameObject.SetActive(false);
+    }
+    private void OnDestroy()
+    {
+        if (mk_Stats != null)
+        {
+            mk_Stats.OnDeath -= HandleDeath;
+        }
+    }
+    private void OnEnable()
+    {
+        if (health != null)
+        {
+            health.OnDeath += HandleDeath;
+        }
+    }
+
+    private void OnDisable()
+    {
+        if (health != null)
+        {
+            health.OnDeath -= HandleDeath;
+        }
     }
 
     private void Update()
@@ -118,17 +142,17 @@ public class Movement : MonoBehaviour
 
     private void HandleMovement()
     {
+        if (!controller.enabled) return;
+
         float x = Input.GetAxis("Horizontal");
         float z = Input.GetAxis("Vertical");
 
         bool isRunning = Input.GetKey(KeyCode.LeftShift);
         float currentSpeed = isRunning ? runSpeed : walkSpeed;
 
-        // Направление движения
         Vector3 move = transform.right * x + transform.forward * z;
         controller.Move(move * currentSpeed * Time.deltaTime);
 
-        // Гравитация
         if (controller.isGrounded && velocity.y < 0)
         {
             velocity.y = -2f;
@@ -139,12 +163,9 @@ public class Movement : MonoBehaviour
         }
         controller.Move(velocity * Time.deltaTime);
 
-        // --- ЛОГИКА ДЛЯ АНИМАЦИИ ---
-        // Вычисляем целевое значение скорости для аниматора
-        // 0 = Стоим, 0.5 = Идем, 1 = Бежим
         float inputMagnitude = new Vector2(x, z).magnitude;
 
-        if (inputMagnitude > 0.1f) // Если есть ввод
+        if (inputMagnitude > 0.1f)
         {
             targetAnimSpeed = isRunning ? 1f : 0.5f;
         }
@@ -163,13 +184,10 @@ public class Movement : MonoBehaviour
 
         if (Input.GetButtonDown("Fire2"))
         {
-            // Проверка перезарядки
             if (Time.time < lastFireTime + fireCooldown) return;
 
             lastFireTime = Time.time;
             PerformMagicAttack();
-
-            // === ЛОГИКА СМЕНЫ ИКОНОК ===
             StartMagicCooldownUI();
 
             if (projectilePrefab != null)
@@ -193,14 +211,8 @@ public class Movement : MonoBehaviour
     private void StartMagicCooldownUI()
     {
         isMagicOnCooldown = true;
-
-        // Переключаем иконки
         if (iconMagicReady != null) iconMagicReady.gameObject.SetActive(false);
         if (iconMagicCooldown != null) iconMagicCooldown.gameObject.SetActive(true);
-
-        // Сбрасываем визуал заполнения, если есть
-        if (iconCooldownFill != null)
-            iconCooldownFill.fillAmount = 1f; // Полное заполнение в начале кулдауна
     }
 
     private void UpdateMagicCooldownUI()
@@ -210,20 +222,11 @@ public class Movement : MonoBehaviour
         float cooldownElapsed = Time.time - lastFireTime;
         float cooldownProgress = Mathf.Clamp01(cooldownElapsed / fireCooldown);
 
-        // Обновляем заполнение (если используется Image с типом Filled)
-        if (iconCooldownFill != null)
-        {
-            iconCooldownFill.fillAmount = 1f - cooldownProgress;
-        }
-
-        // Обновляем текст таймера (опционально)
         if (cooldownText != null)
         {
             float remaining = Mathf.Max(0f, fireCooldown - cooldownElapsed);
-            cooldownText.text = remaining.ToString("F1"); // "2.3"
+            cooldownText.text = remaining.ToString("F1");
         }
-
-        // Если кулдаун закончился — возвращаем иконку "готова"
         if (cooldownElapsed >= fireCooldown)
         {
             EndMagicCooldownUI();
@@ -254,19 +257,8 @@ public class Movement : MonoBehaviour
 
     public void TakeDamage(float damage)
     {
-        if (isDead || isStunned) return;
-
-        mk_Stats.currentHP -= damage;
-        Debug.Log($"Получен урон: {damage}. Осталось HP: {mk_Stats.currentHP}");
-
-        if (mk_Stats.currentHP <= 0)
-        {
-            Die();
-            lose.gameObject.SetActive(true);
-            Cursor.lockState = CursorLockMode.None;
-            Cursor.visible = true;
-        }
-        else
+        mk_Stats.TakeDamage(damage);
+        if (mk_Stats.IsAlive)
         {
             GetHit();
         }
@@ -287,6 +279,18 @@ public class Movement : MonoBehaviour
             if (stunTimer <= 0) isStunned = false;
         }
     }
+    private void HandleDeath()
+    {
+        if (isDead) return;
+        enabled = false;
+        isDead = true;
+        animator.SetTrigger(deathHash);
+        controller.enabled = false;
+
+        lose?.gameObject.SetActive(true);
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+    }
 
     public void Die()
     {
@@ -297,7 +301,6 @@ public class Movement : MonoBehaviour
 
     private void UpdateAnimator()
     {
-        // Плавное изменение параметра Speed (Lerp)
         currentAnimSpeed = Mathf.Lerp(currentAnimSpeed, targetAnimSpeed, Time.deltaTime * animSmoothSpeed);
         animator.SetFloat(speedHash, currentAnimSpeed);
     }
