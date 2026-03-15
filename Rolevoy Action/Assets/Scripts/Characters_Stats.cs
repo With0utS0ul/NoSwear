@@ -24,6 +24,7 @@ public class Characters_Stats : MonoBehaviour
         [HideInInspector] public float currentHP = 50f;
         public float physicalDamage = 10f;
         public string spider_Tag = "Spider";
+        public string spider_bite_Tag = "Spider_bite";
 
         public void ResetStats()
         {
@@ -38,6 +39,7 @@ public class Characters_Stats : MonoBehaviour
         [HideInInspector] public float currentHP = 150f;
         public float magicDamage = 25f;
         public string maga_Tag = "Maga";
+        public string maga_magic_Tag = "Maga_magic";
 
         public void ResetStats()
         {

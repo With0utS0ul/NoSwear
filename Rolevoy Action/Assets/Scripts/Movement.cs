@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Windows.Speech;
 
 [RequireComponent(typeof(CharacterController))]
 [RequireComponent(typeof(Animator))]
@@ -8,6 +9,8 @@ public class Movement : MonoBehaviour
     [SerializeField] private Canvas lose;
     
     public Characters_Stats.PlayerStats mk_Stats;
+
+    [SerializeField] GameObject spear;
    
 
     [Header("Настройки магической атаки")]
@@ -70,6 +73,9 @@ public class Movement : MonoBehaviour
         controller = GetComponent<CharacterController>();
         animator = GetComponent<Animator>();
         mainCamera = Camera.main;
+        
+        
+        
 
         // Инициализация хэшей
         speedHash = Animator.StringToHash("Speed");
@@ -182,7 +188,7 @@ public class Movement : MonoBehaviour
                 Projectile projScript = projectile.GetComponent<Projectile>();
                 if (projScript != null)
                 {
-                    projScript.Init(transform.forward);
+                    projScript.Init(transform.forward,projectileSpeed);
                     projScript.speed = projectileSpeed;
                 }
                 projectile.transform.rotation = Quaternion.LookRotation(transform.forward);
@@ -240,10 +246,17 @@ public class Movement : MonoBehaviour
         if (cooldownText != null) cooldownText.text = "";
     }
 
+    private void AttackCollider()
+    {
+        spear.GetComponent<Collider>().enabled = false;
+    }
+
     private void PerformMeleeAttack()
     {
+        spear.GetComponent<Collider>().enabled = true;
         Debug.Log("Удар мечом! Урон: " + mk_Stats.physicalDamage);
         animator.SetTrigger(attackMeleeHash);
+        Invoke(nameof(AttackCollider), 1);
     }
 
     private void PerformMagicAttack()

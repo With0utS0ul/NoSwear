@@ -52,7 +52,7 @@ public class Health_Damage_System : MonoBehaviour
 
         hp_Slider.minValue = 0;
 
-        // 🎯 Инициализация HP и роли
+        // Инициализация HP и роли
         if (character.CompareTag(mk_Stats.mk_Tag))
         {
             role = 1;
@@ -81,23 +81,21 @@ public class Health_Damage_System : MonoBehaviour
         // Определяем урон в зависимости от роли и атакующего
         if (role == 1) // Игрок получает урон
         {
-            if (attackerTag == spider_Stats.spider_Tag)
+            if (attackerTag == spider_Stats.spider_bite_Tag)
             {
                 damage = spider_Stats.physicalDamage;
                 hp_Slider.value-=damage;
+                movement.TakeDamage(damage);
             }
 
-            else if (attackerTag == maga_Stats.maga_Tag)
+            else if (attackerTag == maga_Stats.maga_magic_Tag)
             { 
                 damage = maga_Stats.magicDamage;
                 hp_Slider.value -= damage;
+                movement.TakeDamage(damage);
             }
 
-            if (damage > 0)
-            {
-                movement.TakeDamage(damage);
-                
-            }
+            
         }
         else if (role == 2) // Паук получает урон
         {

@@ -21,6 +21,8 @@ public class EnemyAI : MonoBehaviour
     private Movement _player;
     private EnemyStates _currentState;
     private Vector3 _roamPosition;
+
+    [System.Obsolete]
     private void Start()
     {
         _player = FindObjectOfType<Movement>();
