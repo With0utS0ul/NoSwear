@@ -13,7 +13,6 @@ GameObject:
   - component: {fileID: 5735996481686916675}
   - component: {fileID: 4646563023419543017}
   - component: {fileID: 1379902169398064582}
-  - component: {fileID: -7699627643692589905}
   m_Layer: 0
   m_Name: Sphere
   m_TagString: MK_magic
@@ -125,31 +124,4 @@ MonoBehaviour:
   speed: 20
   lifetime: 3
   damage: 10
-  hitEffect: {fileID: 8791802859087666345, guid: ae07f2a45f14a82428409cfe410e6002, type: 3}
---- !u!54 &-7699627643692589905
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5316625051857118284}
-  serializedVersion: 4
-  m_Mass: 1
-  m_Drag: 0
-  m_AngularDrag: 0.05
-  m_CenterOfMass: {x: 0, y: 0, z: 0}
-  m_InertiaTensor: {x: 1, y: 1, z: 1}
-  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ImplicitCom: 1
-  m_ImplicitTensor: 1
-  m_UseGravity: 0
-  m_IsKinematic: 0
-  m_Interpolate: 0
-  m_Constraints: 0
-  m_CollisionDetection: 0
+  hitEffect: {fileID: 1413805865972826, guid: 526a9a327d396834d93674d3f82b22d2, type: 3}

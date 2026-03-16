@@ -801,16 +801,28 @@ PrefabInstance:
       addedObject: {fileID: 7358156038607667747}
     - targetCorrespondingSourceObject: {fileID: 100002, guid: 1afa1f1417dd6f447ac37f3ad3e8b28a, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 925590427324843836}
+      addedObject: {fileID: 8968837721666700342}
+    - targetCorrespondingSourceObject: {fileID: 100002, guid: 1afa1f1417dd6f447ac37f3ad3e8b28a, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 825302515211551219}
+    - targetCorrespondingSourceObject: {fileID: 100002, guid: 1afa1f1417dd6f447ac37f3ad3e8b28a, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 7715860630537950657}
+    - targetCorrespondingSourceObject: {fileID: 100002, guid: 1afa1f1417dd6f447ac37f3ad3e8b28a, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 5692422324614042542}
+    - targetCorrespondingSourceObject: {fileID: 100002, guid: 1afa1f1417dd6f447ac37f3ad3e8b28a, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 6329157810621379417}
     - targetCorrespondingSourceObject: {fileID: 100002, guid: 1afa1f1417dd6f447ac37f3ad3e8b28a, type: 3}
       insertIndex: -1
       addedObject: {fileID: 8753942486738358105}
     - targetCorrespondingSourceObject: {fileID: 100002, guid: 1afa1f1417dd6f447ac37f3ad3e8b28a, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 8968837721666700342}
+      addedObject: {fileID: 7489466858817054523}
     - targetCorrespondingSourceObject: {fileID: 100002, guid: 1afa1f1417dd6f447ac37f3ad3e8b28a, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 825302515211551219}
+      addedObject: {fileID: 8144659891627506375}
     - targetCorrespondingSourceObject: {fileID: 100222, guid: 1afa1f1417dd6f447ac37f3ad3e8b28a, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1391283998127115359}
@@ -845,42 +857,6 @@ CharacterController:
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
   m_Center: {x: 0, y: 0.3, z: 0}
---- !u!114 &925590427324843836
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2753021316454024333}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: afe6df0afd5aa8b4099db6dba26a3b4f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  walkSpeed: 5
-  runSpeed: 8
-  rotationSpeed: 10
-  gravity: -9.81
-  cameraPivot: {fileID: 156596932706534330}
-  mouseSensitivity: 2
-  minCameraAngle: -45
-  maxCameraAngle: 85
-  animSmoothSpeed: 10
---- !u!114 &8753942486738358105
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2753021316454024333}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9324dbbe8025bd141bf3ad648745ae2a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  stats_Canvas: {fileID: 6110854039030453108}
-  hp_Slider: {fileID: 2319815764972861485}
-  movementScript: {fileID: 0}
 --- !u!136 &8968837721666700342
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -931,6 +907,115 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &7715860630537950657
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2753021316454024333}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 760d2448f929e8942bea5123a2fd70bf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxHP: 100
+--- !u!114 &5692422324614042542
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2753021316454024333}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 04e5ccce2e9a85246b510f3fcdc628e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  lose: {fileID: 0}
+  projectilePrefab: {fileID: 0}
+  firePoint: {fileID: 0}
+  projectileSpeed: 20
+  fireCooldown: 3
+  projectileDamage: 15
+  iconMagicReady: {fileID: 0}
+  iconMagicCooldown: {fileID: 0}
+  cooldownText: {fileID: 0}
+  walkSpeed: 5
+  runSpeed: 8
+  rotationSpeed: 10
+  gravity: -9.81
+  cameraPivot: {fileID: 0}
+  mouseSensitivity: 2
+  minCameraAngle: -45
+  maxCameraAngle: 85
+  animSmoothSpeed: 10
+--- !u!114 &6329157810621379417
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2753021316454024333}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f5247516b38faff449fa6a517196e325, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  hpSlider: {fileID: 2319815764972861485}
+  canvasTransform: {fileID: 6110854039030453108}
+  worldCamera: {fileID: 6517679321317718351}
+  faceCamera: 1
+--- !u!114 &8753942486738358105
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2753021316454024333}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9324dbbe8025bd141bf3ad648745ae2a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  stats_Canvas: {fileID: 6110854039030453108}
+  hp_Slider: {fileID: 2319815764972861485}
+--- !u!114 &7489466858817054523
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2753021316454024333}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4a207c21fc545a64e8fd08f282cab7da, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  attackerTagToIgnore: MK
+  animator: {fileID: 2753021316461459279}
+  physicalDamage: 10
+  magicDamage: 25
+  characterTag: Default
+--- !u!114 &8144659891627506375
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2753021316454024333}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 45a720a0488235a429129129123803dc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  currentHP: 0
+  maxHP: 100
+  physicalDamage: 10
+  magicDamage: 25
+  mk_Tag: MK
+  mk_spear_Tag: MK_spear
+  mk_magic_Tag: MK_magic
 --- !u!1 &2753021316454024529 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 100222, guid: 1afa1f1417dd6f447ac37f3ad3e8b28a, type: 3}
@@ -960,5 +1045,10 @@ BoxCollider:
 --- !u!4 &2753021316454258861 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 400002, guid: 1afa1f1417dd6f447ac37f3ad3e8b28a, type: 3}
+  m_PrefabInstance: {fileID: 2753021316454122031}
+  m_PrefabAsset: {fileID: 0}
+--- !u!95 &2753021316461459279 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 9500000, guid: 1afa1f1417dd6f447ac37f3ad3e8b28a, type: 3}
   m_PrefabInstance: {fileID: 2753021316454122031}
   m_PrefabAsset: {fileID: 0}
