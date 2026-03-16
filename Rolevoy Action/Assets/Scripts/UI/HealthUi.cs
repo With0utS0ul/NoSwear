@@ -34,7 +34,7 @@ public class HealthUI : MonoBehaviour
         {
             hpSlider.minValue = 0;
             hpSlider.maxValue = _health.MaxHP;
-            hpSlider.value = _health.CurrentHP;
+            hpSlider.value = _health.CurHP;
         }
     }
 

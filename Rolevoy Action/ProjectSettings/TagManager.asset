@@ -9,6 +9,7 @@ TagManager:
   - MK
   - MK_spear
   - MK_magic
+  - Spider_bite
   layers:
   - Default
   - TransparentFX

@@ -8,11 +8,13 @@ public class EnemyAttack : MonoBehaviour
     // Start is called before the first frame update
     [SerializeField] private float _attackRange;
     
-    [SerializeField] private float coolDown;
+    [SerializeField] public float coolDown;
     private float timer;
     public bool CanAttack { get; private set; }
     private Movement player;
     public float AttackRange => _attackRange;
+
+    [System.Obsolete]
     private void Start()
     {
         player = FindObjectOfType<Movement>();
@@ -22,7 +24,7 @@ public class EnemyAttack : MonoBehaviour
     {
         UpdatecoolDown();
     }
-    private void UpdatecoolDown()
+    public void UpdatecoolDown()
     {
 
         if (CanAttack)

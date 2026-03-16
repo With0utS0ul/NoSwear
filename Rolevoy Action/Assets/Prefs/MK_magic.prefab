@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 4646563023419543017}
   - component: {fileID: 1379902169398064582}
   m_Layer: 0
-  m_Name: Sphere
+  m_Name: MK_magic
   m_TagString: MK_magic
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -124,4 +124,4 @@ MonoBehaviour:
   speed: 20
   lifetime: 3
   damage: 10
-  hitEffect: {fileID: 1413805865972826, guid: 526a9a327d396834d93674d3f82b22d2, type: 3}
+  hitEffect: {fileID: 362261158077530393, guid: 20fda529c996a334da7fd65b48ea40df, type: 3}
