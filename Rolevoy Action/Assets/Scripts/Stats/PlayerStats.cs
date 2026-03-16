@@ -29,11 +29,11 @@ public class PlayerStats : MonoBehaviour
             currentHP = 0;
             OnDeath?.Invoke();
         };
-        currentHP = _health.CurrentHP;
+        currentHP = _health.CurHP;
         maxHP = _health.MaxHP;
     }
 
-    public float CurrentHP => _health?.CurrentHP ?? currentHP;
+    public float CurrentHP => _health?.CurHP ?? currentHP;
     public float MaxHP => _health?.MaxHP ?? maxHP;
     public bool IsAlive => _health?.IsAlive ?? (currentHP > 0);
     public void TakeDamage(float damage) => _health?.TakeDamage(damage);
