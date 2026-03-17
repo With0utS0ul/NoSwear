@@ -6,7 +6,7 @@ using UnityEditor.PackageManager;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-public class EnemyAI : MonoBehaviour
+public class EnemyMeleeAI : MonoBehaviour
 {
     [SerializeField] private float _minWalkableDistance;
     [SerializeField] private float _maxWalkableDistance;
@@ -21,6 +21,8 @@ public class EnemyAI : MonoBehaviour
     private Movement _player;
     private EnemyStates _currentState;
     private Vector3 _roamPosition;
+
+    [System.Obsolete]
     private void Start()
     {
         _player = FindObjectOfType<Movement>();

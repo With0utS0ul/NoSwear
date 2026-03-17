@@ -8,7 +8,7 @@ public class Projectile : MonoBehaviour
     [Header("Настройки снаряда")]
     public float speed = 20f;
     public float lifetime = 3f; // Время жизни снаряда
-    public float damage = 10f;
+    //public float damage = 10f;
     public GameObject hitEffect; // Эффект при попадании (опционально)
 
     private Vector3 direction;
@@ -32,8 +32,8 @@ public class Projectile : MonoBehaviour
     {
         if (hasHit) return;
 
-        // Игнорируем триггеры и самого игрока
-        if (other.isTrigger || other.CompareTag("MK")) return;
+        // самого игрока
+        if (other.CompareTag("MK")) return;
 
         hasHit = true;
 

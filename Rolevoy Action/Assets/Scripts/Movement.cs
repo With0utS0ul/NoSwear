@@ -7,6 +7,7 @@ using UnityEngine.UI;
 public class Movement : MonoBehaviour
 {
     [SerializeField] private Canvas lose;
+    [SerializeField] private GameObject spear;
 
     public PlayerStats mk_Stats { get; private set; }
 
@@ -64,6 +65,7 @@ public class Movement : MonoBehaviour
 
     private void Awake()
     {
+        
         health = GetComponent<HealthComp>();
         controller = GetComponent<CharacterController>();
         animator = GetComponent<Animator>();
@@ -72,7 +74,7 @@ public class Movement : MonoBehaviour
         speedHash = Animator.StringToHash("Speed");
         attackMeleeHash = Animator.StringToHash("AttackMelee");
         attackMagicHash = Animator.StringToHash("AttackMagic");
-        hitHash = Animator.StringToHash("Hit");
+        hitHash = Animator.StringToHash("GetDamage");
         deathHash = Animator.StringToHash("Death");
 
         Cursor.lockState = CursorLockMode.Locked;
@@ -245,14 +247,26 @@ public class Movement : MonoBehaviour
 
     private void PerformMeleeAttack()
     {
+        spear.GetComponent<Collider>().enabled = true;
         Debug.Log("Удар мечом! Урон: " + mk_Stats.physicalDamage);
         animator.SetTrigger(attackMeleeHash);
+        
+        Invoke("SpearCollider", 1);
+    }
+
+    private void SpearCollider()
+    {
+        spear.GetComponent<Collider>().enabled = false;
     }
 
     private void PerformMagicAttack()
     {
+
+        
         Debug.Log("Магический удар! Урон: " + mk_Stats.magicDamage);
         animator.SetTrigger(attackMagicHash);
+
+        
     }
 
     public void TakeDamage(float damage)

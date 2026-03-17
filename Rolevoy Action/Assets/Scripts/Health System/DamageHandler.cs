@@ -60,7 +60,7 @@ public class DamageHandler : MonoBehaviour
     {
         if (animator != null && health.IsAlive)
         {
-            animator.SetTrigger("Hit");
+            animator.SetTrigger("GetDamage");
         }
     }
     private void OnEnable() => health.OnDeath += OnCharacterDeath;
