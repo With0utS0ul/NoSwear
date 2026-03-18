@@ -550,7 +550,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1143180963066806, guid: f7769b1fc067cae44b63ccdcc8288127, type: 3}
       propertyPath: m_TagString
-      value: Untagged
+      value: Spider
       objectReference: {fileID: 0}
     - target: {fileID: 1149313386028478, guid: f7769b1fc067cae44b63ccdcc8288127, type: 3}
       propertyPath: m_Layer
@@ -994,6 +994,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   attackerTagToIgnore: Spider
+  destroyOnDeath: 1
   animator: {fileID: 2167971449407098826}
   physicalDamage: 10
   magicDamage: 25

@@ -7,8 +7,8 @@ public class MagAttack : MonoBehaviour
     [SerializeField] private float _coolDown = 2f;
 
     [Header("Projectile Settings")]
-    [SerializeField] private GameObject _projectilePrefab; // Префаб сферы
-    [SerializeField] private Transform _firePoint; // Точка выстрела
+    [SerializeField] private GameObject _projectilePrefab;
+    [SerializeField] private Transform _firePoint;
 
    
     public float CoolDown => _coolDown;
@@ -28,12 +28,9 @@ public class MagAttack : MonoBehaviour
     {
         if (!CanAttack) return;
 
-        // Создаем снаряд
         if (_projectilePrefab != null && _firePoint != null)
         {
             GameObject projectile = Instantiate(_projectilePrefab, _firePoint.position, _firePoint.rotation);
-
-            // Инициализируем снаряд (передаем цель)
             MagicProjectile magicProjectile = projectile.GetComponent<MagicProjectile>();
             if (magicProjectile != null)
             {

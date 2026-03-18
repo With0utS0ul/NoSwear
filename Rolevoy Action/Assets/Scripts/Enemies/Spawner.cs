@@ -14,6 +14,7 @@ public class Spawner : MonoBehaviour
     [SerializeField] private float minY;
     [SerializeField] private float maxY;
     [SerializeField] private float height;
+    [SerializeField] private int count = 0;
     
 
 
@@ -21,10 +22,13 @@ public class Spawner : MonoBehaviour
     // Update is called once per frame
     void Start()
     {
-        
-        var enemyInstance = Instantiate(enemyPrefab);
-        var newPosition = GenerateStartPosition();
-        enemyInstance.transform.position = newPosition;
+        while (count < 3)
+        {
+            var enemyInstance = Instantiate(enemyPrefab);
+            var newPosition = GenerateStartPosition();
+            enemyInstance.transform.position = newPosition;
+            count++;
+        }
         
         
     }

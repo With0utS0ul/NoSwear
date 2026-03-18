@@ -10,7 +10,6 @@ public class PlayerStats : MonoBehaviour
     [HideInInspector] public float magicDamage = 25f;
     [HideInInspector] public string mk_Tag = "MK";
     [HideInInspector] public string mk_spear_Tag = "MK_spear";
-    [HideInInspector] public string mk_magic_Tag = "MK_magic";
 
     private HealthComp _health;
 

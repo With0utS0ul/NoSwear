@@ -306,13 +306,6 @@ public class Movement : MonoBehaviour
         Cursor.visible = true;
     }
 
-    public void Die()
-    {
-        isDead = true;
-        animator.SetTrigger(deathHash);
-        controller.enabled = false;
-    }
-
     private void UpdateAnimator()
     {
         currentAnimSpeed = Mathf.Lerp(currentAnimSpeed, targetAnimSpeed, Time.deltaTime * animSmoothSpeed);

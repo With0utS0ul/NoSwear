@@ -5,7 +5,6 @@ using UnityEngine;
 
 public class EnemyAttack : MonoBehaviour
 {
-    // Start is called before the first frame update
     [SerializeField] private float _attackRange;
     
     [SerializeField] public float coolDown;

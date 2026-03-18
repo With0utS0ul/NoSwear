@@ -21,7 +21,7 @@ public class EnemyMagAI : MonoBehaviour
     [SerializeField] private float _maxAttackDistance = 10f;
     [SerializeField] private float _optimalAttackDistance = 7f;
     [SerializeField] private float _repositionCooldown = 0.5f;
-    [SerializeField] private float _rotationSpeed = 10f; // Скорость поворота
+    [SerializeField] private float _rotationSpeed = 10f;
 
     [Header("Movement Settings")]
     [SerializeField] private float _roamSpeed = 2f;
@@ -41,7 +41,7 @@ public class EnemyMagAI : MonoBehaviour
     private Vector3 _currentTargetPosition;
     private bool _hasTargetPosition;
     private bool _isRetreating;
-    private bool _isAttacking; // Флаг атаки
+    private bool _isAttacking;
 
     [System.Obsolete]
     private void Start()
@@ -143,8 +143,6 @@ public class EnemyMagAI : MonoBehaviour
             _isRetreating = false;
             _isAttacking = true;
             _hasTargetPosition = false;
-
-            // Останавливаем движение
             _agent.isStopped = true;
             _agent.velocity = Vector3.zero;
 

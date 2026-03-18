@@ -5,6 +5,7 @@ public class DamageHandler : MonoBehaviour
 {
     [Header("Damage Settings")]
     [SerializeField] private string attackerTagToIgnore = "";
+    [SerializeField] private bool destroyOnDeath = true;
 
     [Header("References")]
     [SerializeField] private Animator animator;
@@ -71,6 +72,9 @@ public class DamageHandler : MonoBehaviour
         if (animator != null) animator.SetTrigger("Death");
         var collider = GetComponent<Collider>();
         if (collider != null) collider.enabled = false;
-        Destroy(gameObject, 0.5f); 
+        if (destroyOnDeath)
+        {
+            Destroy(gameObject, 0.5f);
+        }
     }
 }
