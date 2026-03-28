@@ -1,50 +1,26 @@
 using UnityEngine;
 using System;
 
-public class HealthComp : MonoBehaviour
+public class HealthComp : MonoBehaviour, IHealth
 {
-    [Header("Health Settings")]
-    [SerializeField] private float maxHP = 100f;
+    [SerializeField] private float maxHealth = 100f;
 
-    public float MaxHP => maxHP;
+    private Health health;
 
-    private float currentHP;
-    public float CurHP
-    {
-        get => currentHP;
-        private set
-        {
-            if (Mathf.Approximately(currentHP, value)) return;
+    public float Current => health.Current;
+    public float Max => health.Max;
 
-            currentHP = Mathf.Clamp(value, 0, maxHP);
-            OnHealthChanged?.Invoke(currentHP, maxHP);
-            if (currentHP <= 0 && !IsDead)
-            {
-                IsDead = true;
-                OnDeath?.Invoke();
-            }
-        }
-    }
-
-    public bool IsAlive => CurHP > 0;
-    public bool IsDead { get; private set; }
-
-    public event Action<float, float> OnHealthChanged;
+    public event Action<float> OnHealthChanged;
     public event Action OnDeath;
 
-    protected virtual void Awake() => Reset();
-
-    public virtual void Reset()
+    private void Awake()
     {
-        IsDead = false;
-        CurHP = maxHP;
+        health = new Health(maxHealth);
+        health.OnHealthChanged += h => OnHealthChanged?.Invoke(h);
+        health.OnDeath += () => OnDeath?.Invoke();
     }
 
-    public virtual void TakeDamage(float damage)
-    {
-        if (!IsAlive || damage <= 0) return;
-        CurHP -= damage;
-    }
-
-    public void SetHP(float value) => CurHP = value;
+    public void Take(float value) => health.Take(value);
+    public void Heal(float value) => health.Heal(value);
+    public void Restore(float value) => health.Restore(value);
 }

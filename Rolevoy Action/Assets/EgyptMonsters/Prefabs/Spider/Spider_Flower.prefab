@@ -105,7 +105,6 @@ GameObject:
   m_Component:
   - component: {fileID: 4308944480718410}
   - component: {fileID: 95844267038306482}
-  - component: {fileID: 114642546781802302}
   m_Layer: 0
   m_Name: Spider_Flower
   m_TagString: Untagged
@@ -152,19 +151,6 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!114 &114642546781802302
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1143180963066806}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2bdf4a8e54cc06249ae87aacebbe862d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  hitFX: {fileID: 1394375103646112, guid: a975789f95cfa474499adb569047348e, type: 2}
 --- !u!1 &1149313386028478
 GameObject:
   m_ObjectHideFlags: 0

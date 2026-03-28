@@ -4,20 +4,16 @@ public class PlayerPrefsSaveService : ISaveService
 {
     public void Save(GameData data)
     {
-        PlayerPrefs.SetFloat("hp", data.PlayerHP);
-        PlayerPrefs.SetString("pos", JsonUtility.ToJson(data.PlayerPosition));
+        string json = JsonUtility.ToJson(data);
+        PlayerPrefs.SetString("SaveData", json);
+        PlayerPrefs.Save();
     }
 
     public GameData Load()
     {
-        var data = new GameData();
-
-        data.PlayerHP = PlayerPrefs.GetFloat("hp", 100);
-
-        var posJson = PlayerPrefs.GetString("pos", "");
-        if (!string.IsNullOrEmpty(posJson))
-            data.PlayerPosition = JsonUtility.FromJson<Vector3>(posJson);
-
-        return data;
+        string json = PlayerPrefs.GetString("SaveData", "");
+        if (!string.IsNullOrEmpty(json))
+            return JsonUtility.FromJson<GameData>(json);
+        return new GameData(); // или null
     }
 }

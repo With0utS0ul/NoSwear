@@ -1,270 +1,169 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.AI;
-using Random = UnityEngine.Random;
 
-public class EnemyMagAI : MonoBehaviour
+public class EnemyMagAI : MonoBehaviour, IDamageable
 {
-    [Header("Roaming Settings")]
-    [SerializeField] private float _minWalkableDistance = 2f;
-    [SerializeField] private float _maxWalkableDistance = 10f;
-    [SerializeField] private float _reachedPointDistance = 1f;
-    [SerializeField] private GameObject _roamTarget;
+    [Header("Roaming")]
+    [SerializeField] private float minWalkDistance = 5f;
+    [SerializeField] private float maxWalkDistance = 15f;
+    [SerializeField] private float reachedPointDistance = 1f;
 
-    [Header("Detection Settings")]
-    [SerializeField] private float _targetFollowRange = 15f;
-    [SerializeField] private float _stopTargetFollowingRange = 20f;
+    [Header("Detection")]
+    [SerializeField] private float followRange = 15f;
+    [SerializeField] private float stopFollowRange = 25f;
 
-    [Header("Ranged Combat Settings")]
-    [SerializeField] private float _minAttackDistance = 5f;
-    [SerializeField] private float _maxAttackDistance = 10f;
-    [SerializeField] private float _optimalAttackDistance = 7f;
-    [SerializeField] private float _repositionCooldown = 0.5f;
-    [SerializeField] private float _rotationSpeed = 10f; // Скорость поворота
+    [Header("Ranged Combat")]
+    [SerializeField] private float minAttackDistance = 5f;
+    [SerializeField] private float maxAttackDistance = 10f;
+    [SerializeField] private float optimalDistance = 7f;
+    [SerializeField] private float repositionCooldown = 0.5f;
 
-    [Header("Movement Settings")]
-    [SerializeField] private float _roamSpeed = 2f;
-    [SerializeField] private float _combatSpeed = 4f;
-    [SerializeField] private float _retreatSpeed = 5f;
-    [SerializeField] private float _angularSpeed = 720f;
+    [Header("Movement")]
+    [SerializeField] private float roamSpeed = 2f;
+    [SerializeField] private float combatSpeed = 3.5f;
+    [SerializeField] private float retreatSpeed = 4f;
 
     [Header("Components")]
-    [SerializeField] private MagAttack _enemyAttack;
-    [SerializeField] private EnemyAnimator _enemyAnimator;
+    [SerializeField] private MagAttack magAttack;
+    [SerializeField] private EnemyAnimator animator;
+    [SerializeField] private HealthComp healthComponent;
 
-    private NavMeshAgent _agent;
-    private Movement _player;
-    private EnemyStates _currentState;
-    private Vector3 _roamPosition;
-    private float _lastRepositionTime;
-    private Vector3 _currentTargetPosition;
-    private bool _hasTargetPosition;
-    private bool _isRetreating;
-    private bool _isAttacking; // Флаг атаки
+    private NavMeshAgent agent;
+    private Transform player;
+    private EnemyStates currentState;
+    private Vector3 roamPosition;
+    private float lastRepositionTime;
+    private bool isAttacking;
 
-    [System.Obsolete]
+    private enum EnemyStates { Roaming, Following }
+
     private void Start()
     {
-        _agent = GetComponent<NavMeshAgent>();
-        _player = FindObjectOfType<Movement>();
+        agent = GetComponent<NavMeshAgent>();
+        player = GameObject.FindGameObjectWithTag("Player").transform;
+        currentState = EnemyStates.Roaming;
+        roamPosition = GenerateRoamPosition();
 
-        _agent.speed = _roamSpeed;
-        _agent.angularSpeed = _angularSpeed;
-        _agent.stoppingDistance = 0.5f;
-        _agent.acceleration = 15f;
-
-        _currentState = EnemyStates.Roaming;
-        _roamPosition = GenerateRoamPosition();
-        _lastRepositionTime = Time.time;
-        _isRetreating = false;
-        _isAttacking = false;
+        healthComponent.OnDeath += Die;
+        healthComponent.OnHealthChanged += _ => animator.SetGetDamage();
     }
 
     private void Update()
     {
-        switch (_currentState)
+        switch (currentState)
         {
-            case EnemyStates.Roaming:
-                UpdateRoaming();
-                break;
-            case EnemyStates.Following:
-                UpdateRangedCombat();
-                break;
+            case EnemyStates.Roaming: UpdateRoaming(); break;
+            case EnemyStates.Following: UpdateRangedCombat(); break;
         }
     }
 
     private void UpdateRoaming()
     {
-        _roamTarget.transform.position = _roamPosition;
+        if (Vector3.Distance(transform.position, roamPosition) <= reachedPointDistance)
+            roamPosition = GenerateRoamPosition();
 
-        if (Vector3.Distance(transform.position, _roamPosition) <= _reachedPointDistance)
-        {
-            _roamPosition = GenerateRoamPosition();
-        }
+        agent.SetDestination(roamPosition);
+        agent.speed = roamSpeed;
+        agent.isStopped = false;
 
-        _agent.destination = _roamPosition;
-        _agent.speed = _roamSpeed;
-        _agent.isStopped = false;
+        animator.Iswalking(true);
+        animator.Isrunning(false);
 
-        TryFindPlayer();
-
-        _enemyAnimator.Iswalking(true);
-        _enemyAnimator.Isrunning(false);
+        if (Vector3.Distance(transform.position, player.position) <= followRange)
+            currentState = EnemyStates.Following;
     }
 
     private void UpdateRangedCombat()
     {
-        float distanceToPlayer = Vector3.Distance(transform.position, _player.transform.position);
+        float distance = Vector3.Distance(transform.position, player.position);
 
-        if (distanceToPlayer >= _stopTargetFollowingRange)
+        if (distance >= stopFollowRange)
         {
-            _currentState = EnemyStates.Roaming;
-            _hasTargetPosition = false;
-            _isRetreating = false;
-            _isAttacking = false;
+            currentState = EnemyStates.Roaming;
             return;
         }
 
-        if (Time.time - _lastRepositionTime >= _repositionCooldown)
+        if (Time.time - lastRepositionTime >= repositionCooldown)
         {
-            _hasTargetPosition = false;
-        }
-
-       
-        // ЛОГИКА ОТСТУПЛЕНИЯ (игрок ближе 5м)
-        
-        if (distanceToPlayer < _minAttackDistance)
-        {
-            _isRetreating = true;
-            _isAttacking = false;
-
-            if (!_hasTargetPosition)
+            if (distance < minAttackDistance)
             {
-                SetRetreatPosition();
-                _hasTargetPosition = true;
-                _lastRepositionTime = Time.time;
+                isAttacking = false;
+                Vector3 retreatDir = (transform.position - player.position).normalized;
+                Vector3 targetPos = player.position + retreatDir * optimalDistance;
+                SetDestination(targetPos);
+                agent.speed = retreatSpeed;
+                animator.Iswalking(false);
+                animator.Isrunning(true);
             }
-
-            _agent.speed = _retreatSpeed;
-            _agent.isStopped = false;
-
-            _enemyAnimator.Iswalking(false);
-            _enemyAnimator.Isrunning(true);
-
-            return;
-        }
-
-        
-        // ЛОГИКА АТАКИ (игрок на дистанции 5-10м)
-        
-        if (distanceToPlayer >= _minAttackDistance && distanceToPlayer <= _maxAttackDistance)
-        {
-            _isRetreating = false;
-            _isAttacking = true;
-            _hasTargetPosition = false;
-
-            // Останавливаем движение
-            _agent.isStopped = true;
-            _agent.velocity = Vector3.zero;
-
-            //  ПОВОРАЧИВАЕМ К ИГРОКУ
-            RotateTowardsPlayer();
-
-            _enemyAnimator.Iswalking(false);
-            _enemyAnimator.Isrunning(false);
-
-            if (_enemyAttack.CanAttack)
+            else if (distance > maxAttackDistance)
             {
-                _enemyAttack.TryAttackPlayer(_player.transform);
-                _enemyAnimator.PlayAttack();
+                isAttacking = false;
+                Vector3 approachDir = (player.position - transform.position).normalized;
+                Vector3 targetPos = player.position - approachDir * optimalDistance;
+                SetDestination(targetPos);
+                agent.speed = combatSpeed;
+                animator.Iswalking(false);
+                animator.Isrunning(true);
             }
-
-            return;
-        }
-
-        
-        // ЛОГИКА ПРИБЛИЖЕНИЯ (игрок дальше 10м)
-        
-        if (distanceToPlayer > _maxAttackDistance)
-        {
-            _isRetreating = false;
-            _isAttacking = false;
-
-            if (!_hasTargetPosition)
+            else
             {
-                SetApproachPosition();
-                _hasTargetPosition = true;
-                _lastRepositionTime = Time.time;
+                isAttacking = true;
+                agent.isStopped = true;
+                RotateTowardsPlayer();
+                animator.Iswalking(false);
+                animator.Isrunning(false);
+                if (magAttack.CanAttack)
+                {
+                    magAttack.TryAttackPlayer(player);
+                    animator.PlayAttack();
+                }
+                return;
             }
-
-            _agent.speed = _combatSpeed;
-            _agent.isStopped = false;
-
-            _enemyAnimator.Iswalking(false);
-            _enemyAnimator.Isrunning(true);
+            lastRepositionTime = Time.time;
         }
+
+        if (!isAttacking)
+            agent.isStopped = false;
     }
 
-    // Поворот к игроку
+    private void SetDestination(Vector3 target)
+    {
+        if (NavMesh.SamplePosition(target, out NavMeshHit hit, 10f, NavMesh.AllAreas))
+            agent.SetDestination(hit.position);
+        else
+            agent.SetDestination(target);
+    }
+
     private void RotateTowardsPlayer()
     {
-        if (_player == null) return;
-
-        // Создаём направление к игроку (без учёта высоты Y)
-        Vector3 directionToPlayer = _player.transform.position - transform.position;
-        directionToPlayer.y = 0;
-        directionToPlayer.Normalize();
-
-        if (directionToPlayer != Vector3.zero)
+        Vector3 direction = (player.position - transform.position).normalized;
+        direction.y = 0;
+        if (direction != Vector3.zero)
         {
-            // Плавно поворачиваемся к игроку
-            Quaternion targetRotation = Quaternion.LookRotation(directionToPlayer);
-            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, _rotationSpeed * Time.deltaTime);
-        }
-    }
-
-    private void SetRetreatPosition()
-    {
-        Vector3 retreatDirection = (transform.position - _player.transform.position).normalized;
-        float retreatDistance = Random.Range(_optimalAttackDistance, _maxAttackDistance);
-        _currentTargetPosition = _player.transform.position + retreatDirection * retreatDistance;
-
-        if (NavMesh.SamplePosition(_currentTargetPosition, out NavMeshHit hit, 10f, NavMesh.AllAreas))
-        {
-            _agent.destination = hit.position;
-        }
-        else
-        {
-            _agent.destination = transform.position + retreatDirection * 10f;
-        }
-    }
-
-    private void SetApproachPosition()
-    {
-        Vector3 approachDirection = (_player.transform.position - transform.position).normalized;
-        _currentTargetPosition = _player.transform.position - approachDirection * _optimalAttackDistance;
-
-        if (NavMesh.SamplePosition(_currentTargetPosition, out NavMeshHit hit, 10f, NavMesh.AllAreas))
-        {
-            _agent.destination = hit.position;
-        }
-    }
-
-    private void TryFindPlayer()
-    {
-        if (Vector3.Distance(transform.position, _player.transform.position) <= _targetFollowRange)
-        {
-            _currentState = EnemyStates.Following;
+            Quaternion targetRotation = Quaternion.LookRotation(direction);
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, 10f * Time.deltaTime);
         }
     }
 
     private Vector3 GenerateRoamPosition()
     {
-        Vector3 randomPosition = transform.position + GenerateRandomDirection() * GenerateRandomWalkableDistance();
-
-        if (NavMesh.SamplePosition(randomPosition, out NavMeshHit hit, 10f, NavMesh.AllAreas))
-        {
+        Vector3 randomDir = Random.insideUnitSphere * Random.Range(minWalkDistance, maxWalkDistance);
+        randomDir.y = 0;
+        Vector3 newPos = transform.position + randomDir;
+        if (NavMesh.SamplePosition(newPos, out NavMeshHit hit, 10f, NavMesh.AllAreas))
             return hit.position;
-        }
-
         return transform.position;
     }
 
-    private float GenerateRandomWalkableDistance()
+    private void Die()
     {
-        return Random.Range(_minWalkableDistance, _maxWalkableDistance);
+        animator.SetDeath();
+        Destroy(gameObject, 2f);
     }
 
-    private Vector3 GenerateRandomDirection()
+    public void ApplyDamage(Damage damage)
     {
-        var newDirection = new Vector3(Random.Range(-1f, 1f), 0f, Random.Range(-1f, 1f));
-        return newDirection.normalized;
-    }
-
-    public enum EnemyStates
-    {
-        Roaming,
-        Following
+        float total = damage.Physical + damage.Magical;
+        healthComponent.Take(total);
     }
 }

@@ -12,13 +12,13 @@ public class EntityView : MonoBehaviour, IDamageable
     public void ApplyDamage(Damage damage)
     {
         entity.ApplyDamage(damage);
-
         if (!entity.IsAlive)
             Die();
     }
 
     private void Die()
     {
+        // Можно вызвать анимацию смерти, если есть
         Destroy(gameObject);
     }
 }
