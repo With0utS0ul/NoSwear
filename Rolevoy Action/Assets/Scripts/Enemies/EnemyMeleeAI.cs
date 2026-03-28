@@ -1,114 +1,106 @@
-using Pathfinding;
-using System.Collections;
-using System.Collections.Generic;
-using System.IO;
-using UnityEditor.PackageManager;
 using UnityEngine;
-using Random = UnityEngine.Random;
+using UnityEngine.AI;
 
-public class EnemyMeleeAI : MonoBehaviour
+public class EnemyMeleeAI : MonoBehaviour, IDamageable
 {
-    [SerializeField] private float _minWalkableDistance;
-    [SerializeField] private float _maxWalkableDistance;
-    [SerializeField] private float _reachedPointDistance;
-    [SerializeField] private GameObject _roamTarget;
-    [SerializeField] private float _targetFollowRange;
-    [SerializeField] private EnemyAttack _enemyAttack;
-    [SerializeField] private float _stopTargetFollowingRange;
-    [SerializeField] private AIDestinationSetter _aiDestinationSetter;
-    [SerializeField] private EnemyAnimator _enemyAnimator;
-    [SerializeField] private AIPath _aiPath;
-    private Movement _player;
-    private EnemyStates _currentState;
-    private Vector3 _roamPosition;
+    [Header("Roaming")]
+    [SerializeField] private float minWalkDistance = 5f;
+    [SerializeField] private float maxWalkDistance = 15f;
+    [SerializeField] private float reachedPointDistance = 1f;
 
-    [System.Obsolete]
+    [Header("Detection")]
+    [SerializeField] private float followRange = 10f;
+    [SerializeField] private float stopFollowRange = 20f;
+
+    [Header("Combat")]
+    [SerializeField] private EnemyAttack enemyAttack;
+
+    [Header("Components")]
+    [SerializeField] private EnemyAnimator animator;
+    [SerializeField] private HealthComp healthComponent;
+
+    private NavMeshAgent agent;
+    private Transform player;
+    private EnemyStates currentState;
+    private Vector3 roamPosition;
+
+    private enum EnemyStates { Roaming, Following }
+
     private void Start()
     {
-        _player = FindObjectOfType<Movement>();
-        
-        _currentState = EnemyStates.Roaming;
-        _roamPosition = GenerateRoamPosition();
+        agent = GetComponent<NavMeshAgent>();
+        player = GameObject.FindGameObjectWithTag("Player").transform;
+        currentState = EnemyStates.Roaming;
+        roamPosition = GenerateRoamPosition();
+
+        healthComponent.OnDeath += Die;
+        healthComponent.OnHealthChanged += _ => animator.SetGetDamage();
     }
+
     private void Update()
     {
-        switch (_currentState)
+        switch (currentState)
         {
-            case EnemyStates.Roaming:
-                _roamTarget.transform.position = _roamPosition;
-
-                if
-
-                (Vector3.Distance(gameObject.transform.position, _roamPosition) <= _reachedPointDistance)
-                {
-                    _roamPosition = GenerateRoamPosition();
-                }
-
-                _aiDestinationSetter.target = _roamTarget.transform;
-                TryFindPlayer();
-                
-                _enemyAnimator.Iswalking(true);
-                _enemyAnimator.Isrunning(false);
-                _aiPath.maxSpeed = 3;
-                break;
-            case EnemyStates.Following:
-                _aiDestinationSetter.target = _player.transform;
-                _enemyAnimator.Iswalking(false);
-                _enemyAnimator.Isrunning(true);
-                
-                _aiPath.maxSpeed = 3;
-                if
-                (Vector3.Distance(gameObject.transform.position, _player.transform.position) < _enemyAttack.AttackRange)
-                {
-                    _enemyAnimator.Iswalking(false);
-                    _enemyAnimator.Isrunning(false);
-                   
-                    if (_enemyAttack.CanAttack)
-                    {
-                        _enemyAttack.TryAttackPlayer();
-                        _enemyAnimator.PlayAttack();
-                    }
-
-
-                }
-                if
-
-                (Vector3.Distance(gameObject.transform.position, _player.transform.position) >= _stopTargetFollowingRange)
-                {
-                    _currentState = EnemyStates.Roaming;
-                }
-
-                break;
-
+            case EnemyStates.Roaming: UpdateRoaming(); break;
+            case EnemyStates.Following: UpdateFollowing(); break;
         }
     }
-    private void TryFindPlayer()
+
+    private void UpdateRoaming()
     {
-        if (Vector3.Distance(gameObject.transform.position, _player.transform.position) <= _targetFollowRange)
-        {
-            _currentState = EnemyStates.Following;
-        }
+        if (Vector3.Distance(transform.position, roamPosition) <= reachedPointDistance)
+            roamPosition = GenerateRoamPosition();
+
+        agent.SetDestination(roamPosition);
+        agent.speed = 2f;
+        agent.isStopped = false;
+
+        animator.Iswalking(true);
+        animator.Isrunning(false);
+
+        if (Vector3.Distance(transform.position, player.position) <= followRange)
+            currentState = EnemyStates.Following;
     }
+
+    private void UpdateFollowing()
+    {
+        agent.SetDestination(player.position);
+        agent.speed = 3f;
+        agent.isStopped = false;
+
+        animator.Iswalking(false);
+        animator.Isrunning(true);
+
+        float distance = Vector3.Distance(transform.position, player.position);
+        if (distance <= enemyAttack.AttackRange && enemyAttack.CanAttack)
+        {
+            agent.isStopped = true;
+            enemyAttack.TryAttackPlayer();
+            animator.PlayAttack();
+        }
+        else if (distance >= stopFollowRange)
+            currentState = EnemyStates.Roaming;
+    }
+
     private Vector3 GenerateRoamPosition()
     {
-        var _roamPosition = gameObject.transform.position + GenerateRandomDirection() * GenerateRandomWalkableDistance();
-        return _roamPosition;
+        Vector3 randomDir = Random.insideUnitSphere * Random.Range(minWalkDistance, maxWalkDistance);
+        randomDir.y = 0;
+        Vector3 newPos = transform.position + randomDir;
+        if (NavMesh.SamplePosition(newPos, out NavMeshHit hit, 10f, NavMesh.AllAreas))
+            return hit.position;
+        return transform.position;
     }
-    private float GenerateRandomWalkableDistance()
+
+    private void Die()
     {
-        var randomDistance = Random.Range(_minWalkableDistance, _maxWalkableDistance);
-        return randomDistance;
+        animator.SetDeath();
+        Destroy(gameObject, 2f);
     }
-    private Vector3 GenerateRandomDirection()
+
+    public void ApplyDamage(Damage damage)
     {
-        var newDirection = new Vector3(Random.Range(-1f, 1f), 0f, Random.Range(-1f, 1f));
-        return newDirection.normalized;
-    }
-    public enum EnemyStates
-    {
-        Roaming,
-        Following
+        float total = damage.Physical + damage.Magical;
+        healthComponent.Take(total);
     }
 }
-
-

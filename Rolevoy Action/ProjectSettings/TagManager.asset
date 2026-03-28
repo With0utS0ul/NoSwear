@@ -10,6 +10,9 @@ TagManager:
   - MK_spear
   - MK_magic
   - Spider_bite
+  - PlayerProjectile
+  - Enemy
+  - EnemyProjectile
   layers:
   - Default
   - TransparentFX

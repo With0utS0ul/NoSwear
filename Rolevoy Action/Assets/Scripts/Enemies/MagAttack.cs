@@ -2,47 +2,34 @@ using UnityEngine;
 
 public class MagAttack : MonoBehaviour
 {
-    [Header("Attack Settings")]
-    
-    [SerializeField] private float _coolDown = 2f;
+    [SerializeField] private float coolDown = 2f;
+    [SerializeField] private GameObject projectilePrefab;
+    [SerializeField] private Transform firePoint;
 
-    [Header("Projectile Settings")]
-    [SerializeField] private GameObject _projectilePrefab; // Префаб сферы
-    [SerializeField] private Transform _firePoint; // Точка выстрела
-
-   
-    public float CoolDown => _coolDown;
     public bool CanAttack { get; private set; } = true;
-
-    private float _lastAttackTime;
+    private float lastAttackTime;
 
     private void Update()
     {
-        if (Time.time - _lastAttackTime >= _coolDown)
-        {
+        if (Time.time - lastAttackTime >= coolDown)
             CanAttack = true;
-        }
     }
 
     public void TryAttackPlayer(Transform playerTransform)
     {
         if (!CanAttack) return;
-
-        // Создаем снаряд
-        if (_projectilePrefab != null && _firePoint != null)
+        if (projectilePrefab != null && firePoint != null)
         {
-            GameObject projectile = Instantiate(_projectilePrefab, _firePoint.position, _firePoint.rotation);
-
-            // Инициализируем снаряд (передаем цель)
-            MagicProjectile magicProjectile = projectile.GetComponent<MagicProjectile>();
-            if (magicProjectile != null)
+            var projectileObj = Instantiate(projectilePrefab, firePoint.position, firePoint.rotation);
+            var projectile = projectileObj.GetComponent<Projectile>();
+            if (projectile != null)
             {
-                magicProjectile.Initialize(playerTransform);
+                Vector3 direction = (playerTransform.position - firePoint.position).normalized;
+                projectile.Init(direction, 20f, DamageType.Magical);
+                projectile.gameObject.tag = "EnemyProjectile"; // важно для идентификации
             }
         }
-
         CanAttack = false;
-        _lastAttackTime = Time.time;
+        lastAttackTime = Time.time;
     }
-
 }
