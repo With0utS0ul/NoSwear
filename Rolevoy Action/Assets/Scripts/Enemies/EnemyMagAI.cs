@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.AI;
 
-public class EnemyMagAI : MonoBehaviour, IDamageable
+public class EnemyMagAI : MonoBehaviour
 {
     [Header("Roaming")]
     [SerializeField] private float minWalkDistance = 5f;
@@ -18,21 +18,26 @@ public class EnemyMagAI : MonoBehaviour, IDamageable
     [SerializeField] private float optimalDistance = 7f;
     [SerializeField] private float repositionCooldown = 0.5f;
 
+    [Header("Attack")]
+    [SerializeField] private float attackCooldown = 2f;
+
     [Header("Movement")]
     [SerializeField] private float roamSpeed = 2f;
     [SerializeField] private float combatSpeed = 3.5f;
     [SerializeField] private float retreatSpeed = 4f;
 
     [Header("Components")]
-    [SerializeField] private MagAttack magAttack;
     [SerializeField] private EnemyAnimator animator;
-    [SerializeField] private HealthComp healthComponent;
+    [SerializeField] private EnemyView enemyView;
 
     private NavMeshAgent agent;
     private Transform player;
     private EnemyStates currentState;
     private Vector3 roamPosition;
+
     private float lastRepositionTime;
+    private float lastAttackTime;
+
     private bool isAttacking;
 
     private enum EnemyStates { Roaming, Following }
@@ -40,16 +45,17 @@ public class EnemyMagAI : MonoBehaviour, IDamageable
     private void Start()
     {
         agent = GetComponent<NavMeshAgent>();
-        player = GameObject.FindGameObjectWithTag("Player").transform;
+        player = GameObject.FindGameObjectWithTag("Player")?.transform;
+
         currentState = EnemyStates.Roaming;
         roamPosition = GenerateRoamPosition();
-
-        healthComponent.OnDeath += Die;
-        healthComponent.OnHealthChanged += _ => animator.SetGetDamage();
     }
 
     private void Update()
     {
+        if (player == null || enemyView == null || enemyView.Enemy == null)
+            return;
+
         switch (currentState)
         {
             case EnemyStates.Roaming: UpdateRoaming(); break;
@@ -62,9 +68,9 @@ public class EnemyMagAI : MonoBehaviour, IDamageable
         if (Vector3.Distance(transform.position, roamPosition) <= reachedPointDistance)
             roamPosition = GenerateRoamPosition();
 
-        agent.SetDestination(roamPosition);
-        agent.speed = roamSpeed;
         agent.isStopped = false;
+        agent.speed = roamSpeed;
+        agent.SetDestination(roamPosition);
 
         animator.Iswalking(true);
         animator.Isrunning(false);
@@ -85,45 +91,57 @@ public class EnemyMagAI : MonoBehaviour, IDamageable
 
         if (Time.time - lastRepositionTime >= repositionCooldown)
         {
+            isAttacking = false;
+
+
             if (distance < minAttackDistance)
             {
-                isAttacking = false;
-                Vector3 retreatDir = (transform.position - player.position).normalized;
-                Vector3 targetPos = player.position + retreatDir * optimalDistance;
-                SetDestination(targetPos);
-                agent.speed = retreatSpeed;
-                animator.Iswalking(false);
-                animator.Isrunning(true);
+                Vector3 dir = (transform.position - player.position).normalized;
+                Vector3 target = player.position + dir * optimalDistance;
+
+                MoveTo(target, retreatSpeed);
             }
             else if (distance > maxAttackDistance)
             {
-                isAttacking = false;
-                Vector3 approachDir = (player.position - transform.position).normalized;
-                Vector3 targetPos = player.position - approachDir * optimalDistance;
-                SetDestination(targetPos);
-                agent.speed = combatSpeed;
-                animator.Iswalking(false);
-                animator.Isrunning(true);
+                Vector3 dir = (player.position - transform.position).normalized;
+                Vector3 target = player.position - dir * optimalDistance;
+
+                MoveTo(target, combatSpeed);
             }
             else
             {
                 isAttacking = true;
                 agent.isStopped = true;
+
                 RotateTowardsPlayer();
+
                 animator.Iswalking(false);
                 animator.Isrunning(false);
-                if (magAttack.CanAttack)
+
+                if (Time.time >= lastAttackTime + attackCooldown)
                 {
-                    magAttack.TryAttackPlayer(player);
+                    enemyView.Enemy.Attack();
                     animator.PlayAttack();
+                    lastAttackTime = Time.time;
                 }
-                return;
             }
+
             lastRepositionTime = Time.time;
         }
 
         if (!isAttacking)
             agent.isStopped = false;
+    }
+
+    private void MoveTo(Vector3 target, float speed)
+    {
+        agent.isStopped = false;
+        agent.speed = speed;
+
+        SetDestination(target);
+
+        animator.Iswalking(false);
+        animator.Isrunning(true);
     }
 
     private void SetDestination(Vector3 target)
@@ -138,10 +156,11 @@ public class EnemyMagAI : MonoBehaviour, IDamageable
     {
         Vector3 direction = (player.position - transform.position).normalized;
         direction.y = 0;
+
         if (direction != Vector3.zero)
         {
-            Quaternion targetRotation = Quaternion.LookRotation(direction);
-            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, 10f * Time.deltaTime);
+            Quaternion targetRot = Quaternion.LookRotation(direction);
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRot, 10f * Time.deltaTime);
         }
     }
 
@@ -149,21 +168,12 @@ public class EnemyMagAI : MonoBehaviour, IDamageable
     {
         Vector3 randomDir = Random.insideUnitSphere * Random.Range(minWalkDistance, maxWalkDistance);
         randomDir.y = 0;
+
         Vector3 newPos = transform.position + randomDir;
+
         if (NavMesh.SamplePosition(newPos, out NavMeshHit hit, 10f, NavMesh.AllAreas))
             return hit.position;
+
         return transform.position;
-    }
-
-    private void Die()
-    {
-        animator.SetDeath();
-        Destroy(gameObject, 2f);
-    }
-
-    public void ApplyDamage(Damage damage)
-    {
-        float total = damage.Physical + damage.Magical;
-        healthComponent.Take(total);
     }
 }

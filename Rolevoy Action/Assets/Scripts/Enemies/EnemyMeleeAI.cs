@@ -14,10 +14,13 @@ public class EnemyMeleeAI : MonoBehaviour, IDamageable
 
     [Header("Combat")]
     [SerializeField] private EnemyAttack enemyAttack;
+    [SerializeField] private float attackDistance = 2f;
+    [SerializeField] private float attackCooldown = 1.5f;
+    private float lastAttackTime;
 
     [Header("Components")]
     [SerializeField] private EnemyAnimator animator;
-    [SerializeField] private HealthComp healthComponent;
+    [SerializeField] private EnemyView enemyView;
 
     private NavMeshAgent agent;
     private Transform player;
@@ -33,8 +36,6 @@ public class EnemyMeleeAI : MonoBehaviour, IDamageable
         currentState = EnemyStates.Roaming;
         roamPosition = GenerateRoamPosition();
 
-        healthComponent.OnDeath += Die;
-        healthComponent.OnHealthChanged += _ => animator.SetGetDamage();
     }
 
     private void Update()
@@ -72,11 +73,17 @@ public class EnemyMeleeAI : MonoBehaviour, IDamageable
         animator.Isrunning(true);
 
         float distance = Vector3.Distance(transform.position, player.position);
-        if (distance <= enemyAttack.AttackRange && enemyAttack.CanAttack)
+
+        if (distance <= attackDistance)
         {
             agent.isStopped = true;
-            enemyAttack.TryAttackPlayer();
-            animator.PlayAttack();
+
+            if (Time.time > lastAttackTime + attackCooldown)
+            {
+                enemyView.Enemy.Attack();
+                animator.PlayAttack();
+                lastAttackTime = Time.time;
+            }
         }
         else if (distance >= stopFollowRange)
             currentState = EnemyStates.Roaming;
@@ -101,6 +108,5 @@ public class EnemyMeleeAI : MonoBehaviour, IDamageable
     public void ApplyDamage(Damage damage)
     {
         float total = damage.Physical + damage.Magical;
-        healthComponent.Take(total);
     }
 }
