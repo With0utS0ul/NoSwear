@@ -38,8 +38,6 @@ public class PauseMenuController
         GameData data = new GameData();
         data.PlayerHP = player.Health.Current;
         data.PlayerPosition = playerTransform.position;
-
-        // ƒоп. балл: сохранить позиции всех врагов с тегом "Enemy"
         var enemies = GameObject.FindGameObjectsWithTag("Enemy");
         data.EnemyPositions = new System.Collections.Generic.List<Vector3>();
         foreach (var enemy in enemies)

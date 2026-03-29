@@ -7,4 +7,9 @@ public class PauseMenuView : MonoBehaviour
     public Button mainMenuButton;
     public Button saveButton;
     public Button loadButton;
+    private void Start()
+    {
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+    }
 }
