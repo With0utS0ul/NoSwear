@@ -10,5 +10,5 @@ public interface IHealth
 
     void Take(float value);
     void Heal(float value);
-    void Restore(float value); // добавлен метод для полного восстановления значения
+    void Restore(float value);
 }

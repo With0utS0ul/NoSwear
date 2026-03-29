@@ -1,3 +1,4 @@
+// PlayerController.cs
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
@@ -5,8 +6,7 @@ public class PlayerController : MonoBehaviour
     [Header("Movement")]
     [SerializeField] private float walkSpeed = 5f;
     [SerializeField] private float runSpeed = 8f;
-    [SerializeField] private float turnSmoothTime = 0.1f;
-    [SerializeField] private Transform cameraTransform;
+    [SerializeField] private float gravity = -9.81f;
 
     [Header("Attack References")]
     [SerializeField] private MeleeWeapon meleeWeapon;
@@ -15,8 +15,8 @@ public class PlayerController : MonoBehaviour
 
     private Player player;
     private CharacterController controller;
-    private float turnSmoothVelocity;
     private PlayerAnimator playerAnimator;
+    private Vector3 velocity;
 
     public void Init(Player player)
     {
@@ -31,37 +31,40 @@ public class PlayerController : MonoBehaviour
     private void Awake()
     {
         controller = GetComponent<CharacterController>();
-        if (cameraTransform == null) cameraTransform = Camera.main.transform;
     }
 
     private void Update()
     {
         HandleMovement();
         HandleAttacks();
+        ApplyGravity();
     }
 
     private void HandleMovement()
     {
         float horizontal = Input.GetAxisRaw("Horizontal");
         float vertical = Input.GetAxisRaw("Vertical");
-        Vector3 direction = new Vector3(horizontal, 0, vertical).normalized;
-
+        Vector3 moveDirection = (transform.forward * vertical + transform.right * horizontal).normalized;
         float speed = Input.GetKey(KeyCode.LeftShift) ? runSpeed : walkSpeed;
 
-        if (direction.magnitude >= 0.1f)
+        if (moveDirection.magnitude >= 0.1f)
         {
-            float targetAngle = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg + cameraTransform.eulerAngles.y;
-            float angle = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetAngle, ref turnSmoothVelocity, turnSmoothTime);
-            transform.rotation = Quaternion.Euler(0, angle, 0);
-
-            Vector3 moveDir = Quaternion.Euler(0, targetAngle, 0) * Vector3.forward;
-            controller.Move(moveDir * speed * Time.deltaTime);
-            playerAnimator?.SetSpeed(moveDir.magnitude);
+            controller.Move(moveDirection * speed * Time.deltaTime);
+            playerAnimator?.SetSpeed(moveDirection.magnitude);
         }
         else
         {
             playerAnimator?.SetSpeed(0);
         }
+    }
+
+    private void ApplyGravity()
+    {
+        if (controller.isGrounded && velocity.y < 0)
+            velocity.y = -2f;
+
+        velocity.y += gravity * Time.deltaTime;
+        controller.Move(velocity * Time.deltaTime);
     }
 
     private void HandleAttacks()
