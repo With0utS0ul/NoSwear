@@ -4,6 +4,9 @@ using UnityEngine.UI;
 public class HealthBar : MonoBehaviour
 {
     [SerializeField] private Slider slider;
+    [SerializeField] private Image fillImage;
+    [SerializeField] private Gradient colorGradient;
+
     private IHealth health;
 
     public void Init(IHealth health)
@@ -11,6 +14,8 @@ public class HealthBar : MonoBehaviour
         this.health = health;
         slider.maxValue = health.Max;
         slider.value = health.Current;
+        if (colorGradient != null)
+            fillImage.color = colorGradient.Evaluate(health.Current / health.Max);
 
         health.OnHealthChanged += UpdateHealthBar;
         health.OnDeath += OnDeathHandler;
@@ -19,6 +24,8 @@ public class HealthBar : MonoBehaviour
     private void UpdateHealthBar(float current)
     {
         slider.value = current;
+        if (colorGradient != null)
+            fillImage.color = colorGradient.Evaluate(current / health.Max);
     }
 
     private void OnDeathHandler()
