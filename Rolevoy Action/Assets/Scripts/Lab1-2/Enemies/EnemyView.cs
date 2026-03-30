@@ -22,6 +22,22 @@ public class EnemyView : MonoBehaviour
 
         IAttack attack = null;
 
+
+
+        health.OnDamage += () =>
+        {
+            if (Enemy != null)
+            {
+                Animator animator = GetComponent<Animator>();
+                if (animator != null)
+                {
+                    animator.SetTrigger("GetDamage");
+                }
+            }
+
+
+        };
+
         health.OnDeath += () =>
         {
             if (Enemy != null)
@@ -30,10 +46,12 @@ public class EnemyView : MonoBehaviour
                 if (animator != null)
                 {
                     animator.SetTrigger("Death");
+                    
                 }
-                Destroy(gameObject, 2f);
+                Destroy(gameObject, 1.0f);
             }
         };
+       
         if (useMelee && meleeWeapon != null)
             attack = new MeleeAttack(meleeWeapon);
 

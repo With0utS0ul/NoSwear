@@ -9,6 +9,22 @@ public class HealthBar : MonoBehaviour
 
     private IHealth health;
 
+
+    private void Start()
+    {
+        // »щем IHealth на родительском EnemyView или PlayerView
+        var enemyView = GetComponentInParent<EnemyView>();
+        if (enemyView != null && enemyView.Enemy != null)
+        {
+            Init(enemyView.Enemy.Health);
+            return;
+        }
+
+        
+
+        Debug.LogWarning("HealthBar: no IHealth found in parent!", this);
+    }
+
     public void Init(IHealth health)
     {
         // отписка если переиспользуетс€

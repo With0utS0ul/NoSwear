@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.AI;
 
-public class EnemyMeleeAI : MonoBehaviour, IDamageable
+public class EnemyMeleeAI : MonoBehaviour
 {
     [Header("Roaming")]
     [SerializeField] private float minWalkDistance = 5f;

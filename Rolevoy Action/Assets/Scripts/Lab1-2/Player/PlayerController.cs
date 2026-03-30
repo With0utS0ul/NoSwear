@@ -26,6 +26,7 @@ public class PlayerController : MonoBehaviour
 
         playerAnimator = GetComponent<PlayerAnimator>();
         player.OnDeath += () => playerAnimator?.SetDeath();
+        player.OnDamage += () => playerAnimator?.SetGetDamage();
     }
 
     private void Awake()

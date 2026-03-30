@@ -8,6 +8,7 @@ public class Health : IHealth
 
     public event Action<float> OnHealthChanged;
     public event Action OnDeath;
+    public event Action OnDamage;
 
     public Health(float max)
     {
@@ -17,6 +18,7 @@ public class Health : IHealth
 
     public void Take(float value)
     {
+        OnDamage?.Invoke();
         Debug.Log($"TAKE DAMAGE: {value}");
         Current -= value;
         if (Current < 0) Current = 0;

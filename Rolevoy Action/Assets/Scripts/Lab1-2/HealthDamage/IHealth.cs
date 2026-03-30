@@ -7,6 +7,7 @@ public interface IHealth
 
     event Action<float> OnHealthChanged;
     event Action OnDeath;
+    event Action OnDamage;
 
     void Take(float value);
     void Heal(float value);
