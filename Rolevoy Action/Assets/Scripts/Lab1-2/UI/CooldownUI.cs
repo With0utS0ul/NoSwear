@@ -10,22 +10,10 @@ public class CooldownUI : MonoBehaviour
 
     private Player player;
 
-    private void Start()
-    {
-        if (playerView != null)
-        {
-            if (playerView.Player != null)
-                OnPlayerReady(playerView.Player);
-            else
-                playerView.OnPlayerReady += OnPlayerReady;
-        }
-    }
 
-    private void OnPlayerReady(Player player)
+    public void Init(Player player)
     {
         this.player = player;
-        if (playerView != null)
-            playerView.OnPlayerReady -= OnPlayerReady; // отписка
     }
 
     private void Update()

@@ -81,4 +81,11 @@ public class PlayerController : MonoBehaviour
             playerAnimator?.SetAttackMagic();
         }
     }
+
+    public void Teleport(Vector3 position)
+    {
+        controller.enabled = false;
+        transform.position = position;
+        controller.enabled = true;
+    }
 }
