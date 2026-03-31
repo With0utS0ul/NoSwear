@@ -24,6 +24,9 @@ public class GameSceneEntryPoint : MonoBehaviour
 
         playerView.Init(player);
         playerController.Init(player);
+        var cooldownUI = FindObjectOfType<CooldownUI>();
+        if (cooldownUI != null)
+            cooldownUI.Init(player);
 
         var playerHealthBar = playerView.GetComponentInChildren<HealthBar>();
         if (playerHealthBar != null)
@@ -39,7 +42,7 @@ public class GameSceneEntryPoint : MonoBehaviour
 
         var pauseView = FindObjectOfType<PauseMenuView>(true);
         if (pauseView != null)
-            new PauseMenuController(pauseView, saveService, player, playerView.transform);
+            new PauseMenuController(pauseView, saveService, player, playerController);
 
         player.OnDeath += () => StartCoroutine(ShowGameOverDelayed());
     }

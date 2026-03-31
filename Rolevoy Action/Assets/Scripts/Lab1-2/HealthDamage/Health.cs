@@ -18,13 +18,15 @@ public class Health : IHealth
 
     public void Take(float value)
     {
-        OnDamage?.Invoke();
+        
         Debug.Log($"TAKE DAMAGE: {value}");
         Current -= value;
         if (Current < 0) Current = 0;
         OnHealthChanged?.Invoke(Current);
         if (Current <= 0)
             OnDeath?.Invoke();
+        if (Current>0)
+            OnDamage?.Invoke();
     }
 
     public void Heal(float value)

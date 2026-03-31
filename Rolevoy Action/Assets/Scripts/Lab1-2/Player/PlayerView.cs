@@ -8,7 +8,7 @@ public class PlayerView : MonoBehaviour
     [Header("Config")]
     [SerializeField] private float maxHealth = 100f;
     [SerializeField] private PlayerController controller;
-    public event Action<Player> OnPlayerReady;
+    
 
     private void Awake()
     {
@@ -19,6 +19,6 @@ public class PlayerView : MonoBehaviour
 
         controller.Init(Player);
 
-        OnPlayerReady?.Invoke(Player);
+        
     }
 }
