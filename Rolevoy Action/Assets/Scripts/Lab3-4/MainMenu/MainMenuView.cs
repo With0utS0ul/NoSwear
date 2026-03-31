@@ -4,4 +4,5 @@ public class MainMenuView : MonoBehaviour
 {
     public Button playButton;
     public Button settingsButton;
+    public Button exitButton;
 }

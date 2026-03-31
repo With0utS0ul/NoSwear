@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class PlayerView : MonoBehaviour
@@ -7,6 +8,7 @@ public class PlayerView : MonoBehaviour
     [Header("Config")]
     [SerializeField] private float maxHealth = 100f;
     [SerializeField] private PlayerController controller;
+    
 
     private void Awake()
     {
@@ -16,5 +18,7 @@ public class PlayerView : MonoBehaviour
         Player = new Player(health, damageService);
 
         controller.Init(Player);
+
+        
     }
 }

@@ -511,7 +511,7 @@ MonoBehaviour:
   fillImage: {fileID: 205951867852636484}
   colorGradient:
     serializedVersion: 2
-    key0: {r: 0.31215477, g: 1, b: 0, a: 1}
+    key0: {r: 1, g: 0.06708869, b: 0, a: 1}
     key1: {r: 1, g: 1, b: 1, a: 1}
     key2: {r: 0, g: 0, b: 0, a: 0}
     key3: {r: 0, g: 0, b: 0, a: 0}
@@ -552,8 +552,9 @@ GameObject:
   - component: {fileID: 3597742057296955520}
   - component: {fileID: 5689871250460098181}
   - component: {fileID: 5884717558803421901}
+  - component: {fileID: 6142093820638510352}
   m_Layer: 0
-  m_Name: Cube
+  m_Name: Sword
   m_TagString: MK_spear
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -568,7 +569,7 @@ Transform:
   m_GameObject: {fileID: 3885285800053570395}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0.008, y: -0.009, z: 0.069}
   m_LocalScale: {x: 0.068975, y: 0.068975, z: 0.068975}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -675,6 +676,21 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &6142093820638510352
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3885285800053570395}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: faca7010262455b4593f2cf9a449ae1d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  damage: 15
+  damageType: 0
+  triggerCollider: {fileID: 5689871250460098181}
 --- !u!1 &6423785926118225084
 GameObject:
   m_ObjectHideFlags: 0
@@ -988,7 +1004,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 100002, guid: 1afa1f1417dd6f447ac37f3ad3e8b28a, type: 3}
       propertyPath: m_Name
-      value: MainKarkusha 1
+      value: MainKarkusha
       objectReference: {fileID: 0}
     - target: {fileID: 100002, guid: 1afa1f1417dd6f447ac37f3ad3e8b28a, type: 3}
       propertyPath: m_IsActive
@@ -1107,9 +1123,6 @@ PrefabInstance:
       addedObject: {fileID: 4772677261469644579}
     - targetCorrespondingSourceObject: {fileID: 100002, guid: 1afa1f1417dd6f447ac37f3ad3e8b28a, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 7037616062798519526}
-    - targetCorrespondingSourceObject: {fileID: 100002, guid: 1afa1f1417dd6f447ac37f3ad3e8b28a, type: 3}
-      insertIndex: -1
       addedObject: {fileID: 3257035856167823408}
     - targetCorrespondingSourceObject: {fileID: 100002, guid: 1afa1f1417dd6f447ac37f3ad3e8b28a, type: 3}
       insertIndex: -1
@@ -1186,7 +1199,7 @@ MonoBehaviour:
   walkSpeed: 5
   runSpeed: 8
   gravity: -9.81
-  meleeWeapon: {fileID: 7037616062798519526}
+  meleeWeapon: {fileID: 0}
   magicFirePoint: {fileID: 6702482084560679028}
   magicProjectilePrefab: {fileID: 5316625051857118284, guid: b319d950918808c4281197e8c95ebe95, type: 3}
 --- !u!114 &7455567648701829631
@@ -1215,21 +1228,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   animator: {fileID: 848073538027495438}
   deathDelay: 2
---- !u!114 &7037616062798519526
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 848073538020103116}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: faca7010262455b4593f2cf9a449ae1d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  damage: 15
-  damageType: 0
-  triggerCollider: {fileID: 5689871250460098181}
 --- !u!114 &3257035856167823408
 MonoBehaviour:
   m_ObjectHideFlags: 0

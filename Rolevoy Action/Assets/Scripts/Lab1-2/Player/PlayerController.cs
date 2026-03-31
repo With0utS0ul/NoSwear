@@ -26,6 +26,7 @@ public class PlayerController : MonoBehaviour
 
         playerAnimator = GetComponent<PlayerAnimator>();
         player.OnDeath += () => playerAnimator?.SetDeath();
+        player.OnDamage += () => playerAnimator?.SetGetDamage();
     }
 
     private void Awake()
@@ -79,5 +80,12 @@ public class PlayerController : MonoBehaviour
             player.AttackMagic();
             playerAnimator?.SetAttackMagic();
         }
+    }
+
+    public void Teleport(Vector3 position)
+    {
+        controller.enabled = false;
+        transform.position = position;
+        controller.enabled = true;
     }
 }

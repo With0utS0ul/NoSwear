@@ -8,11 +8,22 @@ public class CooldownUI : MonoBehaviour
     [SerializeField] private Image cooldownIcon;
     [SerializeField] private Text cooldownText;
 
+    private Player player;
+
+
+    public void Init(Player player)
+    {
+        this.player = player;
+    }
+
     private void Update()
     {
-        float remaining = playerView.Player.GetMagicCooldownRemaining();
+        if (player == null) return;
 
-        if (remaining <= 0f)
+        float remaining = player.GetMagicCooldownRemaining();
+        bool isOnCooldown = remaining > 0.01f;
+
+        if (!isOnCooldown)
         {
             readyIcon.enabled = true;
             cooldownIcon.enabled = false;
@@ -22,7 +33,6 @@ public class CooldownUI : MonoBehaviour
         {
             readyIcon.enabled = false;
             cooldownIcon.enabled = true;
-
             cooldownText.text = remaining.ToString("F1");
         }
     }

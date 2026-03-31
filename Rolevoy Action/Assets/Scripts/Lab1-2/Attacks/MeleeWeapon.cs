@@ -23,7 +23,7 @@ public class MeleeWeapon : MonoBehaviour
     private IEnumerator EnableTriggerForFrame()
     {
         triggerCollider.enabled = true;
-        yield return new WaitForSeconds(0.2f);
+        yield return new WaitForSeconds(0.3f);
         triggerCollider.enabled = false;
     }
 
