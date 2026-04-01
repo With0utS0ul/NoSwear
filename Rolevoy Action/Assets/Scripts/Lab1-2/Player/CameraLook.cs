@@ -10,7 +10,7 @@ public class CameraLook : MonoBehaviour
     public float verticalClampMax = 70f;
 
     [Header("References")]
-    public Transform cameraPivot; // Ссылка на пустой объект-пивот камеры
+    public Transform cameraPivot;
 
     private float verticalRotation = 0f;
 
@@ -30,14 +30,11 @@ public class CameraLook : MonoBehaviour
         float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity * Time.deltaTime;
         float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity * Time.deltaTime;
 
-        // Горизонтальный поворот — самого ИГРОКА (не пивота!)
         transform.Rotate(Vector3.up * mouseX);
 
-        // Вертикальный поворот — ТОЛЬКО пивота камеры
         verticalRotation -= mouseY;
         verticalRotation = Mathf.Clamp(verticalRotation, verticalClampMin, verticalClampMax);
 
-        // Применяем поворот к пивоту (локально, относительно игрока)
         cameraPivot.localRotation = Quaternion.Euler(verticalRotation, 0f, 0f);
     }
 }
