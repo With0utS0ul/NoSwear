@@ -16,6 +16,11 @@ public class GameSceneEntryPoint : MonoBehaviour
         var saveService = GameEntryPoint.Instance != null
     ? GameEntryPoint.Instance.SaveService
     : new PlayerPrefsSaveService();
+        
+
+        IPlayerRepository playerRepo = new PlayerRepository();
+        IEnemiesRepository enemiesRepo = new EnemiesRepository();
+        GameInteractor interactor = new GameInteractor(playerRepo, enemiesRepo, saveService);
 
         var health = new Health(100);
         player = new Player(health, damageService);
@@ -42,7 +47,7 @@ public class GameSceneEntryPoint : MonoBehaviour
 
         var pauseView = FindObjectOfType<PauseMenuView>(true);
         if (pauseView != null)
-            new PauseMenuController(pauseView, saveService, player, playerController);
+            new PauseMenuController(pauseView, interactor, player, playerController);
 
         player.OnDeath += () => StartCoroutine(ShowGameOverDelayed());
     }

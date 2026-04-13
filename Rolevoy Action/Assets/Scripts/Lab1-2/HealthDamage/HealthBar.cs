@@ -12,6 +12,7 @@ public class HealthBar : MonoBehaviour
 
     private void Start()
     {
+        // »щем IHealth на родительском EnemyView или PlayerView
         var enemyView = GetComponentInParent<EnemyView>();
         if (enemyView != null && enemyView.Enemy != null)
         {
@@ -26,6 +27,7 @@ public class HealthBar : MonoBehaviour
 
     public void Init(IHealth health)
     {
+        // отписка если переиспользуетс€
         if (this.health != null)
         {
             this.health.OnHealthChanged -= UpdateHealthBar;
