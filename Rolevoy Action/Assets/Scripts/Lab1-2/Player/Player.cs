@@ -37,6 +37,10 @@ public class Player : Entity
         var projectile = projectileObj.GetComponent<Projectile>();
         projectile?.Init(firePoint.forward, MagicDamage, DamageType.Magical);
     }
+    public float GetMagicCooldown01()
+    {
+        return Mathf.Clamp01((Time.time - lastMagicTime) / magicCooldown);
+    }
 
     public float GetMagicCooldownRemaining()
     {
