@@ -7,6 +7,7 @@ public class PauseMenuView : MonoBehaviour
     public Button mainMenuButton;
     public Button saveButton;
     public Button loadButton;
+    public Toggle peacefulModeToggle;
     private void Start()
     {
         Cursor.lockState = CursorLockMode.None;
