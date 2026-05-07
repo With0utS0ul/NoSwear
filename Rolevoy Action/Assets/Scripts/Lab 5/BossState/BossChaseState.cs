@@ -15,27 +15,38 @@ public class BossChaseState : IState
     {
         context.agent.speed = context.chaseSpeed;
         context.agent.isStopped = false;
-        context.animator.Iswalking(false);
-        context.animator.Isrunning(true);
+        if (context.animator != null)
+        {
+            context.animator.Iswalking(false);
+            context.animator.Isrunning(true);
+        }
     }
 
     public void Update()
     {
+        if (context.IsDead)
+        {
+            ai.GetStateMachine().ChangeState(new BossDeathState(context, ai));
+            return;
+        }
+
+        if (context.player == null)
+        {
+            ai.GetStateMachine().ChangeState(new BossIdleState(context, ai));
+            return;
+        }
+
         float dist = context.DistanceToPlayer;
 
-        if (dist <= context.attackRange)
+        if (dist <= context.attackRange + context.attackRangeBuffer)
         {
-            // ѕереход в атаку
             ai.GetStateMachine().ChangeState(new BossAttackState(context, ai));
             return;
         }
 
         if (dist > context.stopChaseRange)
         {
-            // —лишком далеко Ц возврат в Idle (но босс уже заагрен, можно оставить Chase или вернуть в Idle)
-            // ѕо заданию: босс не должен тер€ть агрессию, поэтому оставл€ем Chase, но можно и вернуть в Idle.
-            // ќставим Chase, но остановим движение. ƒл€ простоты Ц продолжаем сто€ть.
-            context.agent.isStopped = true;
+            ai.GetStateMachine().ChangeState(new BossIdleState(context, ai));
             return;
         }
 
@@ -46,7 +57,8 @@ public class BossChaseState : IState
 
     public void Exit()
     {
-        context.agent.isStopped = false;
+        if (context.animator != null)
+            context.animator.Isrunning(false);
     }
 
     private void RotateTowardsPlayer()

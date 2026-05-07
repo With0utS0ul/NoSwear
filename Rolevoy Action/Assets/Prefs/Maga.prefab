@@ -1245,9 +1245,6 @@ PrefabInstance:
       addedObject: {fileID: 160531143756013851}
     - targetCorrespondingSourceObject: {fileID: 100002, guid: b9e17ef56044b2f40884aee1d8a7e1cd, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 5789346836944267630}
-    - targetCorrespondingSourceObject: {fileID: 100002, guid: b9e17ef56044b2f40884aee1d8a7e1cd, type: 3}
-      insertIndex: -1
       addedObject: {fileID: 2786808151927290191}
     - targetCorrespondingSourceObject: {fileID: 100002, guid: b9e17ef56044b2f40884aee1d8a7e1cd, type: 3}
       insertIndex: -1
@@ -1258,6 +1255,12 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 100002, guid: b9e17ef56044b2f40884aee1d8a7e1cd, type: 3}
       insertIndex: -1
       addedObject: {fileID: 8573250718510292955}
+    - targetCorrespondingSourceObject: {fileID: 100002, guid: b9e17ef56044b2f40884aee1d8a7e1cd, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: -8392042514620212359}
+    - targetCorrespondingSourceObject: {fileID: 100002, guid: b9e17ef56044b2f40884aee1d8a7e1cd, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 5014478097114364136}
   m_SourcePrefab: {fileID: 100100000, guid: b9e17ef56044b2f40884aee1d8a7e1cd, type: 3}
 --- !u!4 &996786132308653327 stripped
 Transform:
@@ -1305,33 +1308,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   animator: {fileID: 996786132318165741}
---- !u!114 &5789346836944267630
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 996786132308814127}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bb40cf1a0d2db7146a80b4f25f78a49c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  minWalkDistance: 5
-  maxWalkDistance: 15
-  reachedPointDistance: 1
-  followRange: 15
-  stopFollowRange: 25
-  minAttackDistance: 5
-  maxAttackDistance: 10
-  optimalDistance: 7
-  repositionCooldown: 0.5
-  attackCooldown: 2
-  roamSpeed: 2
-  combatSpeed: 3.5
-  retreatSpeed: 4
-  animator: {fileID: 160531143756013851}
-  enemyView: {fileID: 5518854037410833373}
 --- !u!195 &2786808151927290191
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -1388,6 +1364,7 @@ MonoBehaviour:
   firePoint: {fileID: 2397204654755148722}
   projectilePrefab: {fileID: 5316625051857118284, guid: 74c3ce446c5a60d44817669e6692314c, type: 3}
   rangedDamage: 10
+  hitReactionCooldown: 0.25
 --- !u!114 &8573250718510292955
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1401,6 +1378,52 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   enemyView: {fileID: 5518854037410833373}
+--- !u!114 &-8392042514620212359
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 996786132308814127}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: efe9c98d84f3d5d4e89e77c58f7124a3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  agent: {fileID: 2786808151927290191}
+  player: {fileID: 848073538020528108, guid: a27de4513c1dd3743ae7cea7f9d201a7, type: 3}
+  enemyView: {fileID: 5518854037410833373}
+  animator: {fileID: 160531143756013851}
+  meleeAttack: {fileID: 0}
+  rangedAttack: {fileID: 3410140555808657177}
+  isPeaceful: 0
+  healthThresholdToFlee: 0.5
+  attackRangeBuffer: 0.5
+  heavyAttackChance: 0.25
+  bossAttackCooldownNormal: 1.5
+  bossAttackCooldownEnraged: 0.8
+  chaseRange: 15
+  stopChaseRange: 25
+  attackRange: 2
+  rangedOptimalDistance: 7
+  roamSpeed: 2
+  chaseSpeed: 3.5
+  fleeSpeed: 5
+  minRoamDistance: 5
+  maxRoamDistance: 15
+  reachedRoamPointDistance: 1
+--- !u!114 &5014478097114364136
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 996786132308814127}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1751ff2338f27a24f8c4a44ca88d4cb0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!95 &996786132318165741 stripped
 Animator:
   m_CorrespondingSourceObject: {fileID: 9500000, guid: b9e17ef56044b2f40884aee1d8a7e1cd, type: 3}

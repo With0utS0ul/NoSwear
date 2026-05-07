@@ -2,8 +2,9 @@ using UnityEngine;
 
 public class BossDeathState : IState
 {
-    private EnemyContext context;
-    private EnemyStateMachineAI ai;
+    private readonly EnemyContext context;
+    private readonly EnemyStateMachineAI ai;
+    private bool entered;
 
     public BossDeathState(EnemyContext context, EnemyStateMachineAI ai)
     {
@@ -13,10 +14,12 @@ public class BossDeathState : IState
 
     public void Enter()
     {
-        context.agent.isStopped = true;
-        context.animator.SetDeath();
-        // Можно добавить задержку перед удалением
-        Object.Destroy(context.gameObject, 2f);
+        if (entered) return;
+        entered = true;
+        if (context.agent != null)
+            context.agent.isStopped = true;
+        if (context.animator != null)
+            context.animator.SetDeath();
     }
 
     public void Update() { }

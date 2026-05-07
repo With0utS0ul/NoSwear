@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 public class PeacefulModeService : IPeacefulModeService
 {
-    private bool isPeaceful = true; // по умолчанию мирный режим включён
+    private bool isPeaceful = false;
     private List<IEnemyPeacefulHandler> enemies = new List<IEnemyPeacefulHandler>();
 
     public bool IsPeaceful

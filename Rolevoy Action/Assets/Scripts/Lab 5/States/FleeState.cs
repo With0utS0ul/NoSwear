@@ -3,45 +3,75 @@ using UnityEngine.AI;
 
 public class FleeState : IState
 {
-    private EnemyContext context;
-    private Vector3 fleeTarget;
+    private readonly EnemyContext ctx;
+    private const float FleeDistance = 12f;
+    private const float RepathInterval = 0.35f;
+    private float startTime;
+    private float nextRepathTime;
 
-    public FleeState(EnemyContext context)
-    {
-        this.context = context;
-    }
+    public FleeState(EnemyContext context) => ctx = context;
 
     public void Enter()
     {
-        context.agent.speed = context.fleeSpeed;
-        context.animator.Iswalking(false);
-        context.animator.Isrunning(true);
-        SetFleeTarget();
+        ctx.agent.isStopped = false;
+        ctx.agent.speed = ctx.fleeSpeed;
+        if (ctx.animator != null)
+            ctx.animator.Isrunning(true);
+        startTime = Time.time;
+        nextRepathTime = Time.time;
+        if (ctx.player == null)
+        {
+            ctx.StateMachine.ChangeState(new IdleState(ctx));
+            return;
+        }
+        SetFleeDestination();
     }
 
     public void Update()
     {
-        if (!context.IsLowHealth)
+        if (ctx.IsDead)
         {
-            context.GetComponent<StateMachine>().ChangeState(new IdleState(context));
+            ctx.StateMachine.ChangeState(new DeathState(ctx));
             return;
         }
 
-        if (Vector3.Distance(context.transform.position, fleeTarget) < 2f)
-            SetFleeTarget();
+        if (!ctx.isPeaceful)
+        {
+            ctx.StateMachine.ChangeState(new IdleState(ctx));
+            return;
+        }
 
-        context.agent.SetDestination(fleeTarget);
+        if (ctx.player == null)
+        {
+            ctx.StateMachine.ChangeState(new IdleState(ctx));
+            return;
+        }
+
+        if (Time.time >= nextRepathTime)
+        {
+            SetFleeDestination();
+            nextRepathTime = Time.time + RepathInterval;
+        }
+
+        if (!ctx.IsLowHealth && Time.time > startTime + 1.0f)
+        {
+            ctx.StateMachine.ChangeState(new IdleState(ctx));
+        }
     }
 
-    private void SetFleeTarget()
+    public void Exit()
     {
-        Vector3 dirAway = (context.transform.position - context.player.position).normalized;
-        Vector3 potentialTarget = context.transform.position + dirAway * 15f;
-        if (NavMesh.SamplePosition(potentialTarget, out NavMeshHit hit, 10f, NavMesh.AllAreas))
-            fleeTarget = hit.position;
-        else
-            fleeTarget = context.transform.position;
+        if (ctx.animator != null)
+            ctx.animator.Isrunning(false);
     }
 
-    public void Exit() { }
+    private void SetFleeDestination()
+    {
+        Vector3 dir = (ctx.transform.position - ctx.player.position).normalized;
+        Vector3 fleeTarget = ctx.transform.position + dir * FleeDistance;
+        if (NavMesh.SamplePosition(fleeTarget, out NavMeshHit hit, 10f, NavMesh.AllAreas))
+            ctx.agent.SetDestination(hit.position);
+        else
+            ctx.agent.SetDestination(fleeTarget);
+    }
 }

@@ -15,16 +15,31 @@ public class BossAttackState : IState
     public virtual void Enter()
     {
         context.agent.isStopped = true;
-        context.animator.Iswalking(false);
-        context.animator.Isrunning(false);
+        if (context.animator != null)
+        {
+            context.animator.Iswalking(false);
+            context.animator.Isrunning(false);
+        }
+        lastAttackTime = Time.time - 999f;
     }
 
     public virtual void Update()
     {
+        if (context.IsDead)
+        {
+            ai.GetStateMachine().ChangeState(new BossDeathState(context, ai));
+            return;
+        }
+
+        if (context.player == null)
+        {
+            ai.GetStateMachine().ChangeState(new BossIdleState(context, ai));
+            return;
+        }
+
         float dist = context.DistanceToPlayer;
 
-        // Если игрок ушёл далеко – вернуться в Chase
-        if (dist > context.attackRange * 1.5f)
+        if (dist > context.attackRange + 1.0f)
         {
             ai.GetStateMachine().ChangeState(new BossChaseState(context, ai));
             return;
@@ -35,20 +50,27 @@ public class BossAttackState : IState
         float cooldown = GetCooldown();
         if (Time.time >= lastAttackTime + cooldown)
         {
-            // Выполнить атаку
+            if (ShouldUseHeavyAttack())
+            {
+                ai.GetStateMachine().ChangeState(new BossHeavyAttack(context, ai));
+                return;
+            }
+
             context.enemyView.Enemy.Attack();
-            context.animator.PlayAttack();
+            if (context.animator != null)
+                context.animator.PlayAttack();
             lastAttackTime = Time.time;
         }
     }
 
     protected virtual float GetCooldown()
     {
-        // Проверяем ХП < 50%: увеличиваем скорость атак (уменьшаем кулдаун)
-        float healthPercent = context.enemyView.Enemy.Health.Current / context.enemyView.Enemy.Health.Max;
-        if (healthPercent < 0.5f)
-            return 0.75f;   // часто
-        return 1.5f;        // обычно
+        return context.BossAttackCooldown;
+    }
+
+    protected virtual bool ShouldUseHeavyAttack()
+    {
+        return Random.value < context.heavyAttackChance;
     }
 
     protected void RotateTowardsPlayer()

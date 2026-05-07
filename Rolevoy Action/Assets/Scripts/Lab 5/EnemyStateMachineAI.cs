@@ -7,23 +7,48 @@ public class EnemyStateMachineAI : MonoBehaviour
     private StateMachine stateMachine;
     private EnemyContext context;
     private bool isBoss;
-    private bool isAggro = false;          // дл€ босса Ц агр включаетс€ после удара
+    private bool isAggro = false;
 
     private void Start()
     {
+        context = GetComponent<EnemyContext>() ?? GetComponentInParent<EnemyContext>() ?? GetComponentInChildren<EnemyContext>();
+        if (context == null)
+        {
+            enabled = false;
+            return;
+        }
+
         stateMachine = new StateMachine();
-        context = GetComponent<EnemyContext>();
+        context.StateMachine = stateMachine;
         isBoss = GetComponent<BossTag>() != null;
 
-        context.player = GameObject.FindGameObjectWithTag("Player")?.transform;
-        if (context.player == null) return;
+        context.agent = context.agent ??
+                        GetComponent<NavMeshAgent>() ??
+                        GetComponentInParent<NavMeshAgent>() ??
+                        GetComponentInChildren<NavMeshAgent>();
+        context.enemyView = context.enemyView ??
+                           GetComponent<EnemyView>() ??
+                           GetComponentInParent<EnemyView>() ??
+                           GetComponentInChildren<EnemyView>();
+        context.animator = context.animator ??
+                           GetComponent<EnemyAnimator>() ??
+                           GetComponentInParent<EnemyAnimator>() ??
+                           GetComponentInChildren<EnemyAnimator>();
+        if (context.meleeAttack == null)
+            context.meleeAttack = GetComponent<EnemyAttack>() ?? GetComponentInParent<EnemyAttack>() ?? GetComponentInChildren<EnemyAttack>();
+        if (context.rangedAttack == null)
+            context.rangedAttack = GetComponent<MagAttack>() ?? GetComponentInParent<MagAttack>() ?? GetComponentInChildren<MagAttack>();
+        context.player = ResolvePlayerTransform();
 
-        context.agent = GetComponent<NavMeshAgent>();
-        context.enemyView = GetComponent<EnemyView>();
-        context.animator = GetComponent<EnemyAnimator>();
+        if (context.agent == null)
+        {
+            Debug.LogError($"[{name}] EnemyStateMachineAI: NavMeshAgent not found. Attach AI to same prefab root as agent.");
+            enabled = false;
+            return;
+        }
 
-        // ƒл€ обычных мобов включаем мирный режим по умолчанию
-        if (!isBoss) context.isPeaceful = true;
+        bool servicePeaceful = GameEntryPoint.Instance?.PeacefulModeService?.IsPeaceful ?? false;
+        context.isPeaceful = servicePeaceful;
 
         if (isBoss)
             stateMachine.ChangeState(new BossIdleState(context, this));
@@ -33,36 +58,60 @@ public class EnemyStateMachineAI : MonoBehaviour
 
     private void Update()
     {
-        if (context.player == null) return;
+        if (context == null || context.agent == null)
+            return;
+
+        if (!context.agent.enabled)
+            return;
+
+        if (!context.agent.isOnNavMesh && NavMesh.SamplePosition(transform.position, out NavMeshHit hit, 5f, NavMesh.AllAreas))
+            context.agent.Warp(hit.position);
+
+        if (!context.agent.isOnNavMesh)
+            return;
+
+        if (context.player == null)
+            context.player = ResolvePlayerTransform();
+
         stateMachine.Update();
     }
 
-    public void ApplyDamage(Damage damage)
-    {
-        if (isBoss && !isAggro)
-        {
-            isAggro = true;
-            context.isPeaceful = false;
-            if (stateMachine.GetCurrentState() is BossIdleState)
-                stateMachine.ChangeState(new BossChaseState(context, this));
-        }
-        // ƒл€ обычных мобов Ц ничего не делаем (они остаютс€ мирными)
-    }
-    // ¬ызываетс€ из EnemyDamageReceiver при получении урона
     public void OnDamageReceived(Damage damage)
     {
+        if (context == null || context.IsDead)
+            return;
+
         if (isBoss && !isAggro)
         {
             isAggro = true;
-            context.isPeaceful = false;   // босс больше не мирный
-            // переходим в агрессию
-            if (stateMachine.GetCurrentState() is BossIdleState)
+            if (!(stateMachine.GetCurrentState() is BossDeathState))
                 stateMachine.ChangeState(new BossChaseState(context, this));
+            return;
         }
-        // ƒл€ обычных мобов Ц ничего не делаем, они остаютс€ мирными (даже при атаке)
+
+        if (isBoss)
+        {
+            return;
+        }
+
+        if (context.isPeaceful && context.IsLowHealth)
+            stateMachine.ChangeState(new FleeState(context));
     }
 
     public bool IsBoss => isBoss;
     public bool IsAggro => isAggro;
     public StateMachine GetStateMachine() => stateMachine;
+
+    private Transform ResolvePlayerTransform()
+    {
+        var byTag = GameObject.FindGameObjectWithTag("Player");
+        if (byTag != null)
+            return byTag.transform;
+
+        var playerController = FindObjectOfType<PlayerController>();
+        if (playerController != null)
+            return playerController.transform;
+
+        return null;
+    }
 }
