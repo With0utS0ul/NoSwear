@@ -8,6 +8,7 @@ public class GameData
     public Vector3 PlayerPosition;
     public List<Vector3> EnemyPositions; // дополнительный балл
     public List<float> EnemyHealths;
+    public bool IsPeacefulMode;
 
 
 }

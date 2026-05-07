@@ -9,6 +9,7 @@ public class MagAttack : MonoBehaviour
     public bool CanAttack { get; private set; } = true;
     private float lastAttackTime;
 
+    public float CoolDown => coolDown;
     private void Update()
     {
         if (Time.time - lastAttackTime >= coolDown)

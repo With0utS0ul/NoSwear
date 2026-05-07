@@ -6,6 +6,8 @@ public class GameEntryPoint : MonoBehaviour
 
     public IAudioService AudioService { get; private set; }
     public ISaveService SaveService { get; private set; }
+    public IPeacefulModeService PeacefulModeService { get; private set; }
+
 
     private void Awake()
     {
@@ -25,5 +27,6 @@ public class GameEntryPoint : MonoBehaviour
     {
         AudioService = new AudioService();
         SaveService = new PlayerPrefsSaveService();
+        PeacefulModeService = new PeacefulModeService();
     }
 }

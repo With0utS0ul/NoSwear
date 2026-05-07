@@ -15,9 +15,14 @@ public class EnemyView : MonoBehaviour
     [SerializeField] private Transform firePoint;
     [SerializeField] private GameObject projectilePrefab;
     [SerializeField] private float rangedDamage = 10f;
+    [SerializeField] private float hitReactionCooldown = 0.25f;
+
+    private Animator animator;
+    private float lastHitReactionTime = -999f;
 
     private void Awake()
     {
+        animator = GetComponent<Animator>();
         IHealth health = new Health(maxHealth);
 
         IAttack attack = null;
@@ -28,10 +33,10 @@ public class EnemyView : MonoBehaviour
         {
             if (Enemy != null)
             {
-                Animator animator = GetComponent<Animator>();
-                if (animator != null)
+                if (animator != null && Time.time >= lastHitReactionTime + hitReactionCooldown)
                 {
                     animator.SetTrigger("GetDamage");
+                    lastHitReactionTime = Time.time;
                 }
             }
 
@@ -42,7 +47,6 @@ public class EnemyView : MonoBehaviour
         {
             if (Enemy != null)
             {
-                Animator animator = GetComponent<Animator>();
                 if (animator != null)
                 {
                     animator.SetTrigger("Death");

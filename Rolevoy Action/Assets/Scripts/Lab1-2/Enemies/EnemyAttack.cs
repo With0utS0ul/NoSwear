@@ -13,6 +13,8 @@ public class EnemyAttack : MonoBehaviour
     public bool CanAttack { get; private set; } = true;
     public float AttackRange => attackRange;
 
+    public float CoolDown => coolDown;
+
     private void Start()
     {
         if (attackTrigger != null)

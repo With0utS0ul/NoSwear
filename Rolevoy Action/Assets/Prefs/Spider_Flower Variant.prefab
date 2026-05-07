@@ -876,9 +876,6 @@ PrefabInstance:
       addedObject: {fileID: 2440076935588069576}
     - targetCorrespondingSourceObject: {fileID: 1143180963066806, guid: f7769b1fc067cae44b63ccdcc8288127, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 8926204714895879484}
-    - targetCorrespondingSourceObject: {fileID: 1143180963066806, guid: f7769b1fc067cae44b63ccdcc8288127, type: 3}
-      insertIndex: -1
       addedObject: {fileID: 3391103634009809019}
     - targetCorrespondingSourceObject: {fileID: 1143180963066806, guid: f7769b1fc067cae44b63ccdcc8288127, type: 3}
       insertIndex: -1
@@ -892,6 +889,12 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 1143180963066806, guid: f7769b1fc067cae44b63ccdcc8288127, type: 3}
       insertIndex: -1
       addedObject: {fileID: -5716447803638482829}
+    - targetCorrespondingSourceObject: {fileID: 1143180963066806, guid: f7769b1fc067cae44b63ccdcc8288127, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 85791557288602071}
+    - targetCorrespondingSourceObject: {fileID: 1143180963066806, guid: f7769b1fc067cae44b63ccdcc8288127, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 181628862134406469}
     - targetCorrespondingSourceObject: {fileID: 1608591376099960, guid: f7769b1fc067cae44b63ccdcc8288127, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1844667407633106372}
@@ -930,28 +933,6 @@ CapsuleCollider:
   m_Height: 1.9792397
   m_Direction: 1
   m_Center: {x: 0.14676003, y: 0.85564536, z: 0.26113987}
---- !u!114 &8926204714895879484
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3216203268322746048}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 92607f47aebb6d146a0083c36fa62026, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  minWalkDistance: 1
-  maxWalkDistance: 15
-  reachedPointDistance: 5
-  followRange: 10
-  stopFollowRange: 20
-  enemyAttack: {fileID: -5716447803638482829}
-  attackDistance: 5
-  attackCooldown: 1.5
-  animator: {fileID: 3391103634009809019}
-  enemyView: {fileID: 734577156893979661}
 --- !u!114 &3391103634009809019
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1006,6 +987,7 @@ MonoBehaviour:
   firePoint: {fileID: 0}
   projectilePrefab: {fileID: 0}
   rangedDamage: 10
+  hitReactionCooldown: 0.25
 --- !u!114 &6522679437835376994
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1036,6 +1018,52 @@ MonoBehaviour:
   damage: 15
   damageType: 0
   attackTrigger: {fileID: 1844667407633106372}
+--- !u!114 &85791557288602071
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3216203268322746048}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: efe9c98d84f3d5d4e89e77c58f7124a3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  agent: {fileID: 4023387098653100596}
+  player: {fileID: 848073538020528108, guid: a27de4513c1dd3743ae7cea7f9d201a7, type: 3}
+  enemyView: {fileID: 734577156893979661}
+  animator: {fileID: 3391103634009809019}
+  meleeAttack: {fileID: -5716447803638482829}
+  rangedAttack: {fileID: 0}
+  isPeaceful: 0
+  healthThresholdToFlee: 0.3
+  attackRangeBuffer: 0.5
+  heavyAttackChance: 0.25
+  bossAttackCooldownNormal: 1.5
+  bossAttackCooldownEnraged: 0.8
+  chaseRange: 15
+  stopChaseRange: 25
+  attackRange: 4
+  rangedOptimalDistance: 7
+  roamSpeed: 2
+  chaseSpeed: 3.5
+  fleeSpeed: 5
+  minRoamDistance: 5
+  maxRoamDistance: 15
+  reachedRoamPointDistance: 1
+--- !u!114 &181628862134406469
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3216203268322746048}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1751ff2338f27a24f8c4a44ca88d4cb0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &3216563421489907470 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1608591376099960, guid: f7769b1fc067cae44b63ccdcc8288127, type: 3}

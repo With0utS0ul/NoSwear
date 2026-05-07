@@ -13,6 +13,7 @@ TagManager:
   - PlayerProjectile
   - Enemy
   - EnemyProjectile
+  - Bosstag
   layers:
   - Default
   - TransparentFX
