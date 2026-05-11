@@ -7,6 +7,6 @@ public class EnemyDamageReceiver : MonoBehaviour, IDamageable
     {
         enemyView.Enemy.ApplyDamage(damage);
         var ai = GetComponent<EnemyStateMachineAI>();
-        if (ai != null) ai.ApplyDamage(damage);
+        if (ai != null) ai.OnDamageReceived(damage);
     }
 }

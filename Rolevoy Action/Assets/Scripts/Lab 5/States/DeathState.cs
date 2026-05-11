@@ -2,7 +2,8 @@ using UnityEngine;
 
 public class DeathState : IState
 {
-    private EnemyContext context;
+    private readonly EnemyContext context;
+    private bool entered;
 
     public DeathState(EnemyContext context)
     {
@@ -11,9 +12,12 @@ public class DeathState : IState
 
     public void Enter()
     {
-        context.agent.isStopped = true;
-        context.animator.SetDeath();
-        GameObject.Destroy(context.gameObject, 2f);
+        if (entered) return;
+        entered = true;
+        if (context.agent != null)
+            context.agent.isStopped = true;
+        if (context.animator != null)
+            context.animator.SetDeath();
     }
 
     public void Update() { }

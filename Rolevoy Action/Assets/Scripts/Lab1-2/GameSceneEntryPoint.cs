@@ -47,7 +47,12 @@ public class GameSceneEntryPoint : MonoBehaviour
 
         var pauseView = FindObjectOfType<PauseMenuView>(true);
         if (pauseView != null)
-            new PauseMenuController(pauseView, interactor, player, playerController);
+            new PauseMenuController(
+                pauseView,
+                interactor,
+                player,
+                playerController,
+                GameEntryPoint.Instance?.PeacefulModeService);
 
         player.OnDeath += () => StartCoroutine(ShowGameOverDelayed());
     }

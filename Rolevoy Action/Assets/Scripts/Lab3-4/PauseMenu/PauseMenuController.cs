@@ -9,19 +9,28 @@ public class PauseMenuController
     private PlayerController playerController;
     private IPeacefulModeService peacefulService;
 
-    public PauseMenuController(PauseMenuView view, GameInteractor interactor, Player player, PlayerController playerController)
+    public PauseMenuController(
+        PauseMenuView view,
+        GameInteractor interactor,
+        Player player,
+        PlayerController playerController,
+        IPeacefulModeService peacefulService)
     {
         this.view = view;
         this.interactor = interactor;
         this.player = player;
         this.playerController = playerController;
+        this.peacefulService = peacefulService;
 
         view.resumeButton.onClick.AddListener(Resume);
         view.mainMenuButton.onClick.AddListener(Exit);
         view.saveButton.onClick.AddListener(Save);
         view.loadButton.onClick.AddListener(Load);
-        view.peacefulModeToggle.isOn = peacefulService.IsPeaceful;
-        view.peacefulModeToggle.onValueChanged.AddListener(OnPeacefulToggled);
+        if (view.peacefulModeToggle != null && this.peacefulService != null)
+        {
+            view.peacefulModeToggle.isOn = this.peacefulService.IsPeaceful;
+            view.peacefulModeToggle.onValueChanged.AddListener(OnPeacefulToggled);
+        }
     }
 
     private void OnPeacefulToggled(bool isOn)

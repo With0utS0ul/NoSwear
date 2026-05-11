@@ -2,8 +2,8 @@ using UnityEngine;
 
 public class AttackState : IState
 {
-    protected EnemyContext context;
-    protected float lastAttackTime;
+    private readonly EnemyContext context;
+    private float lastAttackTime;
 
     public AttackState(EnemyContext context)
     {
@@ -13,44 +13,95 @@ public class AttackState : IState
     public virtual void Enter()
     {
         context.agent.isStopped = true;
-        context.animator.Iswalking(false);
-        context.animator.Isrunning(false);
+        if (context.animator != null)
+        {
+            context.animator.Iswalking(false);
+            context.animator.Isrunning(false);
+        }
+        lastAttackTime = Time.time - 999f;
     }
 
     public virtual void Update()
     {
-        float dist = context.DistanceToPlayer;
-
-        if (context.IsLowHealth)
+        if (context.IsDead)
         {
-            context.GetComponent<StateMachine>().ChangeState(new FleeState(context));
+            context.StateMachine.ChangeState(new DeathState(context));
             return;
         }
 
-        if (dist > context.attackRange * 1.2f)
+        if (context.player == null)
         {
-            context.GetComponent<StateMachine>().ChangeState(new ChaseState(context));
+            context.StateMachine.ChangeState(new IdleState(context));
+            return;
+        }
+
+        if (context.isPeaceful)
+        {
+            if (context.IsLowHealth)
+                context.StateMachine.ChangeState(new FleeState(context));
+            else
+                context.StateMachine.ChangeState(new IdleState(context));
+            return;
+        }
+
+        float dist = context.DistanceToPlayer;
+        bool outOfMelee = context.HasMeleeAttack && dist > context.attackRange + context.attackRangeBuffer;
+        bool outOfRanged = context.HasRangedAttack && (dist < context.rangedOptimalDistance - 2f || dist > context.rangedOptimalDistance + 2f);
+
+        if (outOfMelee || outOfRanged)
+        {
+            context.StateMachine.ChangeState(new ChaseState(context));
             return;
         }
 
         RotateTowardsPlayer();
 
-        float cooldown = GetCooldown();
-        if (Time.time >= lastAttackTime + cooldown)
+        if (context.HasMeleeAttack)
         {
-            context.enemyView.Enemy.Attack();
-            context.animator.PlayAttack();
-            lastAttackTime = Time.time;
+            TryMeleeAttack();
+            return;
         }
+
+        if (context.HasRangedAttack)
+        {
+            TryRangedAttack();
+            return;
+        }
+
+        context.StateMachine.ChangeState(new ChaseState(context));
     }
 
-    protected virtual float GetCooldown()
+    private void TryMeleeAttack()
     {
-        // Ѕазова€ задержка Ц можно переопределить в боссе
-        return 1.5f;
+        if (context.meleeAttack == null)
+            return;
+        if (Time.time < lastAttackTime + context.meleeAttack.CoolDown)
+            return;
+        if (!context.meleeAttack.CanAttack)
+            return;
+
+        context.meleeAttack.TryAttackPlayer();
+        if (context.animator != null)
+            context.animator.PlayAttack();
+        lastAttackTime = Time.time;
     }
 
-    protected void RotateTowardsPlayer()
+    private void TryRangedAttack()
+    {
+        if (context.rangedAttack == null)
+            return;
+        if (Time.time < lastAttackTime + context.rangedAttack.CoolDown)
+            return;
+        if (!context.rangedAttack.CanAttack)
+            return;
+
+        context.rangedAttack.TryAttackPlayer(context.player);
+        if (context.animator != null)
+            context.animator.PlayAttack();
+        lastAttackTime = Time.time;
+    }
+
+    private void RotateTowardsPlayer()
     {
         Vector3 dir = (context.player.position - context.transform.position).normalized;
         dir.y = 0;
@@ -58,5 +109,8 @@ public class AttackState : IState
             context.transform.rotation = Quaternion.Slerp(context.transform.rotation, Quaternion.LookRotation(dir), 10f * Time.deltaTime);
     }
 
-    public virtual void Exit() { }
+    public virtual void Exit()
+    {
+        context.agent.isStopped = false;
+    }
 }

@@ -1,59 +1,98 @@
 using UnityEngine;
+using UnityEngine.AI;
 
 public class ChaseState : IState
 {
-    protected EnemyContext context;
+    private readonly EnemyContext ctx;
 
-    public ChaseState(EnemyContext context)
+    public ChaseState(EnemyContext context) => ctx = context;
+
+    public void Enter()
     {
-        this.context = context;
+        ctx.agent.isStopped = false;
+        ctx.agent.speed = ctx.chaseSpeed;
+        if (ctx.animator != null)
+            ctx.animator.Isrunning(true);
     }
 
-    public virtual void Enter()
+    public void Update()
     {
-        context.agent.speed = context.chaseSpeed;
-        context.agent.isStopped = false;
-        context.animator.Iswalking(false);
-        context.animator.Isrunning(true);
-    }
-
-    public virtual void Update()
-    {
-        float dist = context.DistanceToPlayer;
-
-        if (context.IsLowHealth)
+        if (ctx.IsDead)
         {
-            context.GetComponent<StateMachine>().ChangeState(new FleeState(context));
+            ctx.StateMachine.ChangeState(new DeathState(ctx));
             return;
         }
 
-        if (dist <= context.attackRange)
+        if (ctx.isPeaceful)
         {
-            context.GetComponent<StateMachine>().ChangeState(new AttackState(context));
+            ctx.StateMachine.ChangeState(new IdleState(ctx));
             return;
         }
 
-        if (dist > context.stopChaseRange || (context.isPeaceful && dist > context.chaseRange))
+        if (ctx.player == null)
         {
-            context.GetComponent<StateMachine>().ChangeState(new IdleState(context));
+            ctx.StateMachine.ChangeState(new IdleState(ctx));
             return;
         }
 
-        // Преследование
-        context.agent.SetDestination(context.player.position);
-        RotateTowardsPlayer();
+        float dist = ctx.DistanceToPlayer;
+
+        if (dist > ctx.stopChaseRange)
+        {
+            ctx.StateMachine.ChangeState(new IdleState(ctx));
+            return;
+        }
+
+        if (ctx.HasMeleeAttack && dist <= ctx.attackRange + ctx.attackRangeBuffer)
+        {
+            ctx.StateMachine.ChangeState(new AttackState(ctx));
+            return;
+        }
+
+        if (ctx.HasRangedAttack)
+        {
+            float min = Mathf.Max(1f, ctx.rangedOptimalDistance - 1.5f);
+            float max = ctx.rangedOptimalDistance + 1.5f;
+            if (dist >= min && dist <= max)
+            {
+                ctx.StateMachine.ChangeState(new AttackState(ctx));
+                return;
+            }
+            RepositionForRanged(dist);
+        }
+        else
+        {
+            ctx.agent.SetDestination(ctx.player.position);
+        }
     }
 
-    public virtual void Exit()
+    private void RepositionForRanged(float dist)
     {
-        context.agent.isStopped = false;
+        if (dist < ctx.rangedOptimalDistance - 1.5f)
+        {
+            Vector3 dir = (ctx.transform.position - ctx.player.position).normalized;
+            Vector3 target = ctx.player.position + dir * ctx.rangedOptimalDistance;
+            MoveTo(target);
+            return;
+        }
+
+        Vector3 dirToPlayer = (ctx.player.position - ctx.transform.position).normalized;
+        Vector3 approachTarget = ctx.player.position - dirToPlayer * ctx.rangedOptimalDistance;
+        MoveTo(approachTarget);
     }
 
-    protected void RotateTowardsPlayer()
+    private void MoveTo(Vector3 target)
     {
-        Vector3 dir = (context.player.position - context.transform.position).normalized;
-        dir.y = 0;
-        if (dir != Vector3.zero)
-            context.transform.rotation = Quaternion.Slerp(context.transform.rotation, Quaternion.LookRotation(dir), 10f * Time.deltaTime);
+        ctx.agent.speed = ctx.chaseSpeed;
+        if (NavMesh.SamplePosition(target, out NavMeshHit hit, 10f, NavMesh.AllAreas))
+            ctx.agent.SetDestination(hit.position);
+        else
+            ctx.agent.SetDestination(target);
+    }
+
+    public void Exit()
+    {
+        if (ctx.animator != null)
+            ctx.animator.Isrunning(false);
     }
 }
