@@ -1887,8 +1887,8 @@ GameObject:
   - component: {fileID: 4788753097450574}
   - component: {fileID: 137826583577110772}
   m_Layer: 0
-  m_Name: Attack:swordmesh
-  m_TagString: Untagged
+  m_Name: WeaponBoss
+  m_TagString: Weapon
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -3159,8 +3159,8 @@ GameObject:
   - component: {fileID: 4383395728341946}
   - component: {fileID: 137571146635551562}
   m_Layer: 0
-  m_Name: Attack:Shieldmesh
-  m_TagString: Untagged
+  m_Name: BossShield
+  m_TagString: Weapon
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -3509,6 +3509,9 @@ GameObject:
   - component: {fileID: 9060788081677426985}
   - component: {fileID: 8767975336436702113}
   - component: {fileID: 6259126691090538678}
+  - component: {fileID: -7685290295958441562}
+  - component: {fileID: 1184072176381887132}
+  - component: {fileID: 7435951554184736290}
   m_Layer: 0
   m_Name: Boss
   m_TagString: Enemy
@@ -3600,7 +3603,7 @@ MonoBehaviour:
   enemyView: {fileID: 8690943554797961845}
   animator: {fileID: 314815205933008266}
   meleeAttack: {fileID: 4163897807896888549}
-  rangedAttack: {fileID: 0}
+  rangedAttack: {fileID: -7685290295958441562}
   isPeaceful: 0
   healthThresholdToFlee: 0.3
   attackRangeBuffer: 0.5
@@ -3617,6 +3620,8 @@ MonoBehaviour:
   minRoamDistance: 5
   maxRoamDistance: 15
   reachedRoamPointDistance: 5
+  weaponHandler: {fileID: 1184072176381887132}
+  bossCombatController: {fileID: 7435951554184736290}
 --- !u!114 &8690943554797961845
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3633,10 +3638,11 @@ MonoBehaviour:
   useMelee: 1
   meleeWeapon: {fileID: 6216747148005172736}
   useRanged: 0
-  firePoint: {fileID: 0}
-  projectilePrefab: {fileID: 0}
+  firePoint: {fileID: 3288212999530926865}
+  projectilePrefab: {fileID: 5316625051857118284, guid: 74c3ce446c5a60d44817669e6692314c, type: 3}
   rangedDamage: 10
   hitReactionCooldown: 0.25
+  speed: 1
 --- !u!114 &1477008288715345453
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3727,6 +3733,51 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1751ff2338f27a24f8c4a44ca88d4cb0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &-7685290295958441562
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1895212641966680}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 424d728ce08ccd0429d3f450af1301ef, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  coolDown: 2
+  projectilePrefab: {fileID: 5316625051857118284, guid: 74c3ce446c5a60d44817669e6692314c, type: 3}
+  firePoint: {fileID: 3288212999530926865}
+--- !u!114 &1184072176381887132
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1895212641966680}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cb3d7453c6c1e2a4ea5c8953a7590c63, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  currentWeapon: {fileID: 0}
+--- !u!114 &7435951554184736290
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1895212641966680}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ec4926dce01b9a7458a42e5d23e2bd3c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  availableProfiles:
+  - {fileID: 11400000, guid: d95cf10921b33f94090af9ea7f30d4f9, type: 2}
+  - {fileID: 11400000, guid: ea2ec06082540f34091c54a035a9b360, type: 2}
+  - {fileID: 11400000, guid: 7c2a762b1ad06d7439879abf688f00a7, type: 2}
+  - {fileID: 11400000, guid: a0a078ef14081fb49adc0f8d613eaa55, type: 2}
 --- !u!1 &1922268467297602
 GameObject:
   m_ObjectHideFlags: 0

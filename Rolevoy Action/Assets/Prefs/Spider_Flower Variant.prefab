@@ -895,6 +895,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 1143180963066806, guid: f7769b1fc067cae44b63ccdcc8288127, type: 3}
       insertIndex: -1
       addedObject: {fileID: 181628862134406469}
+    - targetCorrespondingSourceObject: {fileID: 1143180963066806, guid: f7769b1fc067cae44b63ccdcc8288127, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 715989311461055971}
     - targetCorrespondingSourceObject: {fileID: 1608591376099960, guid: f7769b1fc067cae44b63ccdcc8288127, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1844667407633106372}
@@ -988,6 +991,7 @@ MonoBehaviour:
   projectilePrefab: {fileID: 0}
   rangedDamage: 10
   hitReactionCooldown: 0.25
+  speed: 1
 --- !u!114 &6522679437835376994
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1052,6 +1056,8 @@ MonoBehaviour:
   minRoamDistance: 5
   maxRoamDistance: 15
   reachedRoamPointDistance: 1
+  attackHandler: {fileID: 715989311461055971}
+  bossCombatController: {fileID: 0}
 --- !u!114 &181628862134406469
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1064,6 +1070,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1751ff2338f27a24f8c4a44ca88d4cb0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &715989311461055971
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3216203268322746048}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0e1ab094a5a0a264697b1c3af8d63c59, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  currentProfile: {fileID: 11400000, guid: 7eacf93b5f937684280ca61c83714922, type: 2}
 --- !u!1 &3216563421489907470 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1608591376099960, guid: f7769b1fc067cae44b63ccdcc8288127, type: 3}

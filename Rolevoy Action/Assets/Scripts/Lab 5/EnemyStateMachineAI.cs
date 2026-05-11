@@ -47,6 +47,25 @@ public class EnemyStateMachineAI : MonoBehaviour
             return;
         }
 
+        // Для обычных врагов
+        if (!isBoss)
+        {
+            var handler = GetComponent<EnemyAttackHandler>();
+            if (handler == null) handler = gameObject.AddComponent<EnemyAttackHandler>();
+            context.attackHandler = handler;
+            // Загружаем все профили из папки Resources/AttackProfiles
+            AttackProfile[] allProfiles = Resources.LoadAll<AttackProfile>("AttackProfiles");
+            // Фильтруем по ближнему/дальнему (определяем по наличию MagAttack или по тегу)
+            bool isMeleeEnemy = GetComponent<MagAttack>() == null; // если нет MagAttack – ближний
+            var suitable = System.Array.FindAll(allProfiles, p => p.isMelee == isMeleeEnemy);
+
+            if (suitable.Length > 0)
+            {
+                var randomProfile = suitable[Random.Range(0, suitable.Length)];
+                handler.SetProfile(randomProfile);
+            }
+        }
+
         bool servicePeaceful = GameEntryPoint.Instance?.PeacefulModeService?.IsPeaceful ?? false;
         context.isPeaceful = servicePeaceful;
 

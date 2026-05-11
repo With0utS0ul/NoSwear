@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -51,6 +52,7 @@ public class EnemyContext : MonoBehaviour, IEnemyPeacefulHandler
     public bool HasMeleeAttack => meleeAttack != null;
     public bool HasRangedAttack => rangedAttack != null;
     public float DistanceToPlayer => player == null ? float.MaxValue : Vector3.Distance(transform.position, player.position);
+    public bool HasValidAttack => attackHandler != null && attackHandler.CurrentProfile != null;
     public bool CanAttackNow =>
         HasMeleeAttack ? meleeAttack.CanAttack :
         HasRangedAttack && rangedAttack.CanAttack;
@@ -66,6 +68,8 @@ public class EnemyContext : MonoBehaviour, IEnemyPeacefulHandler
         }
     }
 
+    public EnemyAttackHandler attackHandler;
+    public BossCombatController bossCombatController;
     private void Start()
     {
         GameEntryPoint.Instance?.PeacefulModeService?.RegisterEnemy(this);

@@ -13,7 +13,7 @@ public class RageState : IState
         // Увеличиваем скорость атаки (уменьшаем кулдаун)
         originalAttackCooldown = 1.5f;
         // Здесь можно изменить attack cooldown через поле в контексте или использовать глобальный модификатор
-        Debug.Log("Boss enters RAGE mode! Attack speed increased.");
+        //Debug.Log("Boss enters RAGE mode! Attack speed increased.");
     }
 
     public void Update()

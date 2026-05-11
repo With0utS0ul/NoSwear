@@ -37,10 +37,14 @@ public class BossChaseState : IState
         }
 
         float dist = context.DistanceToPlayer;
+        bool isRanged = context.bossCombatController?.CurrentProfile?.weaponType == BossWeaponType.Ranged;
 
-        if (dist <= context.attackRange + context.attackRangeBuffer)
+        float attackRange = isRanged ? context.rangedOptimalDistance : context.attackRange;
+        float stopDistance = isRanged ? attackRange + 2f : context.attackRange + context.attackRangeBuffer;
+
+        if (dist <= stopDistance)
         {
-            ai.GetStateMachine().ChangeState(new BossAttackState(context, ai));
+            context.StateMachine.ChangeState(new BossAttackState(context, ai));
             return;
         }
 

@@ -61,6 +61,11 @@ public class BossAttackState : IState
                 context.animator.PlayAttack();
             lastAttackTime = Time.time;
         }
+
+        if (context.bossCombatController != null)
+            context.bossCombatController.PerformAttack(context.player);
+        else
+            context.enemyView.Enemy.Attack(); // fallback
     }
 
     protected virtual float GetCooldown()
