@@ -482,7 +482,7 @@ GameObject:
   - component: {fileID: 4908540066001944}
   - component: {fileID: 137291784092915584}
   m_Layer: 0
-  m_Name: Attack:Skeleton_0010:Minion
+  m_Name: BossBody
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3613,14 +3613,14 @@ MonoBehaviour:
   chaseRange: 15
   stopChaseRange: 25
   attackRange: 5
-  rangedOptimalDistance: 7
+  rangedOptimalDistance: 15
   roamSpeed: 2
   chaseSpeed: 3.5
   fleeSpeed: 5
   minRoamDistance: 5
   maxRoamDistance: 15
   reachedRoamPointDistance: 5
-  weaponHandler: {fileID: 1184072176381887132}
+  attackHandler: {fileID: 0}
   bossCombatController: {fileID: 7435951554184736290}
 --- !u!114 &8690943554797961845
 MonoBehaviour:
@@ -4207,7 +4207,7 @@ Transform:
   m_GameObject: {fileID: 220998089842222499}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.044, y: 0.20086728, z: 0.2}
+  m_LocalPosition: {x: 0.044, y: 0.20086728, z: 0.3}
   m_LocalScale: {x: 0.05, y: 0.05, z: 0.05}
   m_ConstrainProportionsScale: 0
   m_Children: []

@@ -7,11 +7,16 @@ public enum BossWeaponType { Melee, Ranged }
 public class BossWeaponProfile : ScriptableObject
 {
     public string profileName;
-    public BossWeaponType weaponType;   // <-- äîáàâèòü
+    public BossWeaponType weaponType;
     public BossElementType element;
 
     [Header("Weapon Model Material")]
     public Material weaponMaterial;
+
+    // --- ÈÇÌÅÍÅÍÈÅ: íîâîå ïîëå ---
+    [Header("Boss Body Material")]
+    public Material bodyMaterial;   // åñëè íå null, áóäåò ïðèìåí¸í ê ìîäåëè áîññà
+    // --- ÊÎÍÅÖ ÈÇÌÅÍÅÍÈß ---
 
     [Header("Attack Visuals & Audio")]
     public GameObject attackVfxPrefab;

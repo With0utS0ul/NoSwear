@@ -22,7 +22,11 @@ public class BossHeavyAttack : BossAttackState
 
         float dist = context.DistanceToPlayer;
 
-        if (dist > context.attackRange + 1.0f)
+        float effectiveRange = context.attackRange;
+        if (context.bossCombatController?.CurrentProfile?.weaponType == BossWeaponType.Ranged)
+            effectiveRange = context.rangedOptimalDistance;
+
+        if (dist > effectiveRange + 1.0f)
         {
             ai.GetStateMachine().ChangeState(new BossChaseState(context, ai));
             return;
@@ -32,10 +36,29 @@ public class BossHeavyAttack : BossAttackState
 
         if (Time.time >= lastAttackTime + HeavyCooldown)
         {
-            context.enemyView.Enemy.Attack();
-            if (context.animator != null)
-                context.animator.PlayBigAttack();
-            lastAttackTime = Time.time;
+            // --- ИЗМЕНЕНИЕ: поддержка ranged с проверкой готовности ---
+            if (context.bossCombatController?.CurrentProfile?.weaponType == BossWeaponType.Ranged)
+            {
+                if (context.bossCombatController.CanDoRangedAttack())
+                {
+                    context.bossCombatController.PerformRangedAttack(context.player);
+                    if (context.animator != null)
+                        context.animator.PlayBigAttack();
+                    lastAttackTime = Time.time;
+                }
+                else
+                {
+                    // не можем выстрелить – остаёмся в этом же состоянии, не переключаясь
+                    return;
+                }
+            }
+            else
+            {
+                context.bossCombatController?.PerformAttack(context.player);
+                if (context.animator != null)
+                    context.animator.PlayBigAttack();
+                lastAttackTime = Time.time;
+            }
 
             ai.GetStateMachine().ChangeState(new BossAttackState(context, ai));
         }

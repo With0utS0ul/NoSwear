@@ -1,4 +1,4 @@
-using UnityEngine;
+п»їusing UnityEngine;
 
 public class EnemyAttackHandler : MonoBehaviour
 {
@@ -19,6 +19,7 @@ public class EnemyAttackHandler : MonoBehaviour
     {
         if (!CanAttack) return;
 
+        // РќР°РЅРѕСЃРёРј СѓСЂРѕРЅ (С‡РµСЂРµР· СЃС‚Р°СЂС‹Рµ РєРѕРјРїРѕРЅРµРЅС‚С‹, С‡С‚РѕР±С‹ РЅРµ Р»РѕРјР°С‚СЊ СЃСѓС‰РµСЃС‚РІСѓСЋС‰СѓСЋ Р»РѕРіРёРєСѓ)
         if (CurrentProfile.isMelee)
         {
             if (context.meleeAttack != null)
@@ -36,35 +37,29 @@ public class EnemyAttackHandler : MonoBehaviour
 
         lastAttackTime = Time.time;
 
-        // Звук
         if (currentProfile.attackSound != null)
             AudioSource.PlayClipAtPoint(currentProfile.attackSound, context.transform.position);
 
-        // Визуальный эффект атаки (укус, вспышка магии)
         if (currentProfile.attackVfxPrefab != null)
         {
             Vector3 vfxPos = context.transform.position + context.transform.forward * 0.5f;
             Instantiate(currentProfile.attackVfxPrefab, vfxPos, Quaternion.identity);
         }
 
-        // Для дальнего боя – если есть отдельный снаряд, спавним его
         if (!currentProfile.isMelee && currentProfile.projectilePrefab != null)
         {
-            // Используем существующий MagAttack, но переопределяем его данные
+            // РњРѕР¶РЅРѕ СЃРѕР·РґР°С‚СЊ РІСЂРµРјРµРЅРЅС‹Р№ СЃРЅР°СЂСЏРґ РёР»Рё РїРµСЂРµРѕРїСЂРµРґРµР»РёС‚СЊ РїР°СЂР°РјРµС‚СЂС‹ MagAttack
+            // РќР°РїСЂРёРјРµСЂ, С‡РµСЂРµР· РѕС‚РґРµР»СЊРЅС‹Р№ РјРµС‚РѕРґ РІ MagAttack
             var magAttack = context.rangedAttack;
             if (magAttack != null)
             {
-                // Пример: метод ApplyProfile(profile)
-                magAttack.ApplyProfile(currentProfile);
+                magAttack.ApplyProfile(currentProfile); // СЌС‚РѕС‚ РјРµС‚РѕРґ РЅСѓР¶РЅРѕ СЂРµР°Р»РёР·РѕРІР°С‚СЊ РІ MagAttack
                 magAttack.TryAttackPlayer(target);
             }
         }
-        else
-        {
-            // Ближняя атака – вызываем стандартную атаку врага
-            context.enemyView?.Enemy?.Attack();
-        }
 
-        // Эффект попадания будет обработан при ударе по игроку
+        // РђРЅРёРјР°С†РёСЏ вЂ“ РІС‹Р·С‹РІР°РµРј Р·РґРµСЃСЊ (РёР»Рё РѕСЃС‚Р°РІР»СЏРµРј РІ AttackState вЂ“ РЅР° РІР°С€Рµ СѓСЃРјРѕС‚СЂРµРЅРёРµ)
+        if (context.animator != null)
+            context.animator.PlayAttack();
     }
 }

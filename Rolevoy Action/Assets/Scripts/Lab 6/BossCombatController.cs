@@ -5,8 +5,11 @@ public class BossCombatController : MonoBehaviour
     [SerializeField] private BossWeaponProfile[] availableProfiles;
     public BossWeaponProfile CurrentProfile { get; private set; }
 
-    private Renderer weaponRenderer;  // меч/оружие
-    private Renderer shieldRenderer;  // щит (опционально)
+    private Renderer weaponRenderer;
+    private Renderer shieldRenderer;
+    // --- ИЗМЕНЕНИЕ: новое поле ---
+    private Renderer bodyRenderer;
+    // --- КОНЕЦ ИЗМЕНЕНИЯ ---
 
     private MagAttack magAttack;
     private EnemyView enemyView;
@@ -16,18 +19,19 @@ public class BossCombatController : MonoBehaviour
         enemyView = GetComponent<EnemyView>();
         magAttack = GetComponent<MagAttack>();
 
-        // Поиск меча (по наличию "weapon" в имени)
         weaponRenderer = FindRendererByName("weapon");
-
-        // Поиск щита (по наличию "shield" в имени) – опционально
         shieldRenderer = FindRendererByName("shield");
+        // --- ИЗМЕНЕНИЕ: ищем тело ---
+        bodyRenderer = FindRendererByName("body");
+        if (bodyRenderer == null)
+            Debug.LogWarning($"[{name}] Boss body renderer not found. Create a child object with 'body' in its name.");
+        // --- КОНЕЦ ИЗМЕНЕНИЯ ---
 
         if (weaponRenderer == null)
             Debug.LogWarning($"[{name}] Weapon not found. Rename child object to contain 'weapon'.");
         if (shieldRenderer == null)
             Debug.Log($"[{name}] No shield found (optional).");
 
-        // Выбор случайного профиля
         if (availableProfiles != null && availableProfiles.Length > 0)
         {
             int idx = Random.Range(0, availableProfiles.Length);
@@ -36,7 +40,6 @@ public class BossCombatController : MonoBehaviour
         }
     }
 
-    /// <summary>Ищет дочерний объект с именем, содержащим указанную строку, и возвращает его Renderer.</summary>
     private Renderer FindRendererByName(string namePart)
     {
         Transform[] allChildren = GetComponentsInChildren<Transform>(true);
@@ -59,28 +62,33 @@ public class BossCombatController : MonoBehaviour
             return;
         }
 
-        Material newMat = Instantiate(CurrentProfile.weaponMaterial);
-
-        // Применяем к оружию
+        // Оружие и щит
+        Material newWeaponMat = Instantiate(CurrentProfile.weaponMaterial);
         if (weaponRenderer != null)
         {
-            ApplyMaterialToRenderer(weaponRenderer, newMat);
+            ApplyMaterialToRenderer(weaponRenderer, newWeaponMat);
             Debug.Log($"Weapon material changed to {CurrentProfile.weaponMaterial.name}");
         }
-
-        // Применяем к щиту, если он есть
         if (shieldRenderer != null)
         {
-            ApplyMaterialToRenderer(shieldRenderer, newMat);
+            ApplyMaterialToRenderer(shieldRenderer, newWeaponMat);
             Debug.Log($"Shield material changed to {CurrentProfile.weaponMaterial.name}");
         }
+
+        // --- ИЗМЕНЕНИЕ: применение материала тела ---
+        if (bodyRenderer != null && CurrentProfile.bodyMaterial != null)
+        {
+            Material newBodyMat = Instantiate(CurrentProfile.bodyMaterial);
+            ApplyMaterialToRenderer(bodyRenderer, newBodyMat);
+            Debug.Log($"Body material changed to {CurrentProfile.bodyMaterial.name}");
+        }
+        // --- КОНЕЦ ИЗМЕНЕНИЯ ---
 
         // Настройка дальнего боя
         if (magAttack != null && CurrentProfile.projectilePrefab != null)
             magAttack.ApplyBossProfile(CurrentProfile);
     }
 
-    /// <summary>Заменяет все слоты материалов на указанный материал.</summary>
     private void ApplyMaterialToRenderer(Renderer renderer, Material material)
     {
         int slotCount = renderer.sharedMaterials.Length;
@@ -88,6 +96,11 @@ public class BossCombatController : MonoBehaviour
         for (int i = 0; i < slotCount; i++)
             newMaterials[i] = material;
         renderer.materials = newMaterials;
+    }
+
+    public bool CanDoRangedAttack()
+    {
+        return magAttack != null && magAttack.CanAttack;
     }
 
     public void PerformAttack(Transform target)
@@ -98,5 +111,20 @@ public class BossCombatController : MonoBehaviour
         if (CurrentProfile.attackVfxPrefab != null)
             Instantiate(CurrentProfile.attackVfxPrefab, transform.position + transform.forward, Quaternion.identity);
         enemyView?.Enemy?.Attack();
+    }
+
+    public void PerformRangedAttack(Transform target)
+    {
+        if (CurrentProfile == null || CurrentProfile.weaponType != BossWeaponType.Ranged)
+            return;
+        if (!CanDoRangedAttack())
+            return;
+
+        if (CurrentProfile.attackSound != null)
+            AudioSource.PlayClipAtPoint(CurrentProfile.attackSound, transform.position);
+        if (CurrentProfile.attackVfxPrefab != null)
+            Instantiate(CurrentProfile.attackVfxPrefab, transform.position + transform.forward, Quaternion.identity);
+
+        magAttack.TryAttackPlayer(target);
     }
 }

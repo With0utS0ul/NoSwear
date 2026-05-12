@@ -65,20 +65,13 @@ public class MagAttack : MonoBehaviour
     private float GetDamageFromEnemyView()
     {
         if (enemyView == null) return 10f;
-        // Вариант 1: если у EnemyView есть публичное поле rangedDamage
-        // (в вашем EnemyView rangedDamage есть в инспекторе, но оно private, нужно сделать public или добавить свойство)
-        // return enemyView.RangedDamage; 
-
-        // Вариант 2: через компонент MeleeWeapon или RangedAttack, но проще сделать свойство
-        // Пока вернём дефолтное значение, вы потом добавите геттер
-        return 10f;
+        return enemyView.RangedDamage; 
     }
 
     public void ApplyProfile(AttackProfile profile)
     {
         if (profile == null) return;
 
-        // Меняем только то, что не хранится в EnemyView (цвет, скорость, префаб, кулдаун)
         currentProjectileSpeed = profile.projectileSpeed;
         currentProjectileColor = profile.projectileColor;
 
@@ -87,7 +80,5 @@ public class MagAttack : MonoBehaviour
 
         if (profile.cooldown > 0)
             coolDown = profile.cooldown;
-
-        // Урон не трогаем — он берётся из EnemyView
     }
 }

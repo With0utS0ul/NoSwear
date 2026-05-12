@@ -1,9 +1,9 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 public class AttackState : IState
 {
     private readonly EnemyContext context;
-    private float lastAttackTime;
+    private float lastAttackTime; // уже не нужен, но оставим для совместимости (можно удалить)
 
     public AttackState(EnemyContext context)
     {
@@ -18,7 +18,6 @@ public class AttackState : IState
             context.animator.Iswalking(false);
             context.animator.Isrunning(false);
         }
-        lastAttackTime = Time.time - 999f;
     }
 
     public virtual void Update()
@@ -56,49 +55,44 @@ public class AttackState : IState
 
         RotateTowardsPlayer();
 
-        if (context.HasMeleeAttack)
+        // ★★★ Главные изменения ★★★
+        // Пытаемся атаковать через AttackHandler
+        if (context.attackHandler != null && context.attackHandler.CurrentProfile != null)
         {
-            TryMeleeAttack();
-            return;
+            if (context.attackHandler.CanAttack) // проверяем кулдаун внутри хендлера
+            {
+                context.attackHandler.PerformAttack(context, context.player);
+                // Анимацию запускаем здесь, если её нет внутри PerformAttack
+                if (context.animator != null)
+                    context.animator.PlayAttack();
+            }
         }
-
-        if (context.HasRangedAttack)
+        else
         {
-            TryRangedAttack();
-            return;
+            // Fallback на старую логику (если хендлер или профиль отсутствуют)
+            if (context.HasMeleeAttack)
+                TryMeleeAttack_Fallback();
+            else if (context.HasRangedAttack)
+                TryRangedAttack_Fallback();
+            else
+                context.StateMachine.ChangeState(new ChaseState(context));
         }
-
-        context.StateMachine.ChangeState(new ChaseState(context));
     }
 
-    private void TryMeleeAttack()
+    private void TryMeleeAttack_Fallback()
     {
-        if (context.meleeAttack == null)
-            return;
-        if (Time.time < lastAttackTime + context.meleeAttack.CoolDown)
-            return;
-        if (!context.meleeAttack.CanAttack)
-            return;
-
+        if (context.meleeAttack == null) return;
+        if (!context.meleeAttack.CanAttack) return;
         context.meleeAttack.TryAttackPlayer();
-        if (context.animator != null)
-            context.animator.PlayAttack();
-        lastAttackTime = Time.time;
+        if (context.animator != null) context.animator.PlayAttack();
     }
 
-    private void TryRangedAttack()
+    private void TryRangedAttack_Fallback()
     {
-        if (context.rangedAttack == null)
-            return;
-        if (Time.time < lastAttackTime + context.rangedAttack.CoolDown)
-            return;
-        if (!context.rangedAttack.CanAttack)
-            return;
-
+        if (context.rangedAttack == null) return;
+        if (!context.rangedAttack.CanAttack) return;
         context.rangedAttack.TryAttackPlayer(context.player);
-        if (context.animator != null)
-            context.animator.PlayAttack();
-        lastAttackTime = Time.time;
+        if (context.animator != null) context.animator.PlayAttack();
     }
 
     private void RotateTowardsPlayer()
