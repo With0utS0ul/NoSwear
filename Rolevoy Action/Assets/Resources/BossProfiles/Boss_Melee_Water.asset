@@ -16,6 +16,7 @@ MonoBehaviour:
   weaponType: 0
   element: 2
   weaponMaterial: {fileID: 2100000, guid: 2e13f00851b599249bb294a1b69fb84e, type: 2}
+  bodyMaterial: {fileID: 2100000, guid: 2b45426dea3ed084f9b4c20889360dbd, type: 2}
   attackVfxPrefab: {fileID: 0}
   attackSound: {fileID: 0}
   projectileColor: {r: 0, g: 0.6508484, b: 1, a: 1}
