@@ -13,7 +13,7 @@ public class RageState : IState
     public void Enter()
     {
         originalAttackCooldown = 0.5f;
-        // логика изменения кулдауна
+        // Г«Г®ГЈГЁГЄГ  ГЁГ§Г¬ГҐГ­ГҐГ­ГЁГї ГЄГіГ«Г¤Г ГіГ­Г 
     }
 
     public void Update() { }

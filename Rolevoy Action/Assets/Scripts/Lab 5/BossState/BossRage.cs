@@ -23,7 +23,7 @@ public class BossRageState : IState
     {
         if (Time.time >= rageStartTime + rageDuration)
         {
-            // Возврат к обычному режиму
+            // Г‚Г®Г§ГўГ°Г ГІ ГЄ Г®ГЎГ»Г·Г­Г®Г¬Гі Г°ГҐГ¦ГЁГ¬Гі
             ai.GetStateMachine().ChangeState(new BossAttackState(context, ai));
             return;
         }

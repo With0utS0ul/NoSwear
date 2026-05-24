@@ -62,7 +62,7 @@ public class BossCombatController : MonoBehaviour
             return;
         }
 
-        // Оружие и щит
+        // ГЋГ°ГіГ¦ГЁГҐ ГЁ Г№ГЁГІ
         Material newWeaponMat = Instantiate(CurrentProfile.weaponMaterial);
         if (weaponRenderer != null)
         {
@@ -84,7 +84,7 @@ public class BossCombatController : MonoBehaviour
         }
         
 
-        // Настройка дальнего боя
+        // ГЌГ Г±ГІГ°Г®Г©ГЄГ  Г¤Г Г«ГјГ­ГҐГЈГ® ГЎГ®Гї
         if (magAttack != null && CurrentProfile.projectilePrefab != null)
             magAttack.ApplyBossProfile(CurrentProfile);
     }

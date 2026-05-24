@@ -20,10 +20,10 @@ public class EnemyStateMachineAI : MonoBehaviour
         }
 
         stateMachine = new StateMachine();
-        // Больше не сохраняем StateMachine в контексте
+        // ГЃГ®Г«ГјГёГҐ Г­ГҐ Г±Г®ГµГ°Г Г­ГїГҐГ¬ StateMachine Гў ГЄГ®Г­ГІГҐГЄГ±ГІГҐ
         isBoss = GetComponent<BossTag>() != null;
 
-        // Инициализация компонентов (оставляем без изменений)
+        // Г€Г­ГЁГ¶ГЁГ Г«ГЁГ§Г Г¶ГЁГї ГЄГ®Г¬ГЇГ®Г­ГҐГ­ГІГ®Гў (Г®Г±ГІГ ГўГ«ГїГҐГ¬ ГЎГҐГ§ ГЁГ§Г¬ГҐГ­ГҐГ­ГЁГ©)
         context.agent = context.agent ?? GetComponent<NavMeshAgent>() ?? GetComponentInParent<NavMeshAgent>() ?? GetComponentInChildren<NavMeshAgent>();
         context.enemyView = context.enemyView ?? GetComponent<EnemyView>() ?? GetComponentInParent<EnemyView>() ?? GetComponentInChildren<EnemyView>();
         context.animator = context.animator ?? GetComponent<EnemyAnimator>() ?? GetComponentInParent<EnemyAnimator>() ?? GetComponentInChildren<EnemyAnimator>();
@@ -40,7 +40,7 @@ public class EnemyStateMachineAI : MonoBehaviour
             return;
         }
 
-        // Инициализация AttackHandler для обычных врагов
+        // Г€Г­ГЁГ¶ГЁГ Г«ГЁГ§Г Г¶ГЁГї AttackHandler Г¤Г«Гї Г®ГЎГ»Г·Г­Г»Гµ ГўГ°Г ГЈГ®Гў
         if (!isBoss)
         {
             var handler = GetComponent<EnemyAttackHandler>();
@@ -59,7 +59,7 @@ public class EnemyStateMachineAI : MonoBehaviour
         bool servicePeaceful = GameEntryPoint.Instance?.PeacefulModeService?.IsPeaceful ?? false;
         context.isPeaceful = servicePeaceful;
 
-        // Используем фабрику для создания начального состояния
+        // Г€Г±ГЇГ®Г«ГјГ§ГіГҐГ¬ ГґГ ГЎГ°ГЁГЄГі Г¤Г«Гї Г±Г®Г§Г¤Г Г­ГЁГї Г­Г Г·Г Г«ГјГ­Г®ГЈГ® Г±Г®Г±ГІГ®ГїГ­ГЁГї
         stateFactory = new EnemyStateFactory(context, this);
         IState initialState = stateFactory.GetInitialState();
         stateMachine.ChangeState(initialState);
@@ -105,7 +105,7 @@ public class EnemyStateMachineAI : MonoBehaviour
     public bool IsBoss => isBoss;
     public bool IsAggro => isAggro;
     public StateMachine GetStateMachine() => stateMachine;
-    public IEnemyStateFactory StateFactory => stateFactory; // доступ для состояний, если нужно
+    public IEnemyStateFactory StateFactory => stateFactory; // Г¤Г®Г±ГІГіГЇ Г¤Г«Гї Г±Г®Г±ГІГ®ГїГ­ГЁГ©, ГҐГ±Г«ГЁ Г­ГіГ¦Г­Г®
 
     private Transform ResolvePlayerTransform()
     {
