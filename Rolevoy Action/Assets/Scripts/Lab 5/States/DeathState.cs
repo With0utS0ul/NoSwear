@@ -3,11 +3,13 @@ using UnityEngine;
 public class DeathState : IState
 {
     private readonly EnemyContext context;
+    private readonly EnemyStateMachineAI ai;
     private bool entered;
 
-    public DeathState(EnemyContext context)
+    public DeathState(EnemyContext context, EnemyStateMachineAI ai)
     {
         this.context = context;
+        this.ai = ai;
     }
 
     public void Enter()

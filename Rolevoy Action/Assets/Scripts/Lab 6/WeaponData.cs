@@ -5,14 +5,14 @@ public class WeaponData : ScriptableObject
 {
     [Header("Basic")]
     public string weaponName;
-    public bool isMelee = true;      // true Ц ближнее, false Ц дальнее
+    public bool isMelee = true;      
     public float damage = 10f;
     public float cooldown = 1.5f;
-    public float range = 2f;          // дл€ ближнего Ц дистанци€ атаки, дл€ дальнего Ц оптимальна€ дистанци€
-    public float optimalDistance = 7f; // дл€ дальнего бо€
+    public float range = 2f;          
+    public float optimalDistance = 7f; 
 
     [Header("Effects")]
-    public GameObject hitEffectPrefab;   // эффект при попадании
+    public GameObject hitEffectPrefab;   
     public AudioClip attackSound;
-    public GameObject muzzleFlashPrefab;  // дл€ дальнего оружи€
+    public GameObject muzzleFlashPrefab;
 }

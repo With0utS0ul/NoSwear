@@ -7,9 +7,9 @@ public class BossCombatController : MonoBehaviour
 
     private Renderer weaponRenderer;
     private Renderer shieldRenderer;
-    // --- ÈÇÌÅÍÅÍÈÅ: íîâîå ïîëå ---
+    
     private Renderer bodyRenderer;
-    // --- ÊÎÍÅÖ ÈÇÌÅÍÅÍÈß ---
+    
 
     private MagAttack magAttack;
     private EnemyView enemyView;
@@ -21,11 +21,11 @@ public class BossCombatController : MonoBehaviour
 
         weaponRenderer = FindRendererByName("weapon");
         shieldRenderer = FindRendererByName("shield");
-        // --- ÈÇÌÅÍÅÍÈÅ: èùåì òåëî ---
+        
         bodyRenderer = FindRendererByName("body");
         if (bodyRenderer == null)
             Debug.LogWarning($"[{name}] Boss body renderer not found. Create a child object with 'body' in its name.");
-        // --- ÊÎÍÅÖ ÈÇÌÅÍÅÍÈß ---
+        
 
         if (weaponRenderer == null)
             Debug.LogWarning($"[{name}] Weapon not found. Rename child object to contain 'weapon'.");
@@ -62,7 +62,7 @@ public class BossCombatController : MonoBehaviour
             return;
         }
 
-        // Îğóæèå è ùèò
+        // ÃÃ°Ã³Ã¦Ã¨Ã¥ Ã¨ Ã¹Ã¨Ã²
         Material newWeaponMat = Instantiate(CurrentProfile.weaponMaterial);
         if (weaponRenderer != null)
         {
@@ -75,16 +75,16 @@ public class BossCombatController : MonoBehaviour
             Debug.Log($"Shield material changed to {CurrentProfile.weaponMaterial.name}");
         }
 
-        // --- ÈÇÌÅÍÅÍÈÅ: ïğèìåíåíèå ìàòåğèàëà òåëà ---
+        
         if (bodyRenderer != null && CurrentProfile.bodyMaterial != null)
         {
             Material newBodyMat = Instantiate(CurrentProfile.bodyMaterial);
             ApplyMaterialToRenderer(bodyRenderer, newBodyMat);
             Debug.Log($"Body material changed to {CurrentProfile.bodyMaterial.name}");
         }
-        // --- ÊÎÍÅÖ ÈÇÌÅÍÅÍÈß ---
+        
 
-        // Íàñòğîéêà äàëüíåãî áîÿ
+        // ÃÃ Ã±Ã²Ã°Ã®Ã©ÃªÃ  Ã¤Ã Ã«Ã¼Ã­Ã¥Ã£Ã® Ã¡Ã®Ã¿
         if (magAttack != null && CurrentProfile.projectilePrefab != null)
             magAttack.ApplyBossProfile(CurrentProfile);
     }

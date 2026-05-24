@@ -13,10 +13,10 @@ public class BossWeaponProfile : ScriptableObject
     [Header("Weapon Model Material")]
     public Material weaponMaterial;
 
-    // --- ИЗМЕНЕНИЕ: новое поле ---
+    
     [Header("Boss Body Material")]
-    public Material bodyMaterial;   // если не null, будет применён к модели босса
-    // --- КОНЕЦ ИЗМЕНЕНИЯ ---
+    public Material bodyMaterial;   // ГҐГ±Г«ГЁ Г­ГҐ null, ГЎГіГ¤ГҐГІ ГЇГ°ГЁГ¬ГҐГ­ВёГ­ ГЄ Г¬Г®Г¤ГҐГ«ГЁ ГЎГ®Г±Г±Г 
+    
 
     [Header("Attack Visuals & Audio")]
     public GameObject attackVfxPrefab;

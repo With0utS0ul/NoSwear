@@ -2,12 +2,13 @@
 
 public class AttackState : IState
 {
-    private readonly EnemyContext context;
-    private float lastAttackTime; // уже не нужен, но оставим для совместимости (можно удалить)
+    protected readonly EnemyContext context;
+    protected readonly EnemyStateMachineAI ai;
 
-    public AttackState(EnemyContext context)
+    public AttackState(EnemyContext context, EnemyStateMachineAI ai)
     {
         this.context = context;
+        this.ai = ai;
     }
 
     public virtual void Enter()
@@ -24,22 +25,22 @@ public class AttackState : IState
     {
         if (context.IsDead)
         {
-            context.StateMachine.ChangeState(new DeathState(context));
+            ai.GetStateMachine().ChangeState(new DeathState(context, ai));
             return;
         }
 
         if (context.player == null)
         {
-            context.StateMachine.ChangeState(new IdleState(context));
+            ai.GetStateMachine().ChangeState(new IdleState(context, ai));
             return;
         }
 
         if (context.isPeaceful)
         {
             if (context.IsLowHealth)
-                context.StateMachine.ChangeState(new FleeState(context));
+                ai.GetStateMachine().ChangeState(new FleeState(context, ai));
             else
-                context.StateMachine.ChangeState(new IdleState(context));
+                ai.GetStateMachine().ChangeState(new IdleState(context, ai));
             return;
         }
 
@@ -49,33 +50,30 @@ public class AttackState : IState
 
         if (outOfMelee || outOfRanged)
         {
-            context.StateMachine.ChangeState(new ChaseState(context));
+            ai.GetStateMachine().ChangeState(new ChaseState(context, ai));
             return;
         }
 
         RotateTowardsPlayer();
 
-        // ★★★ Главные изменения ★★★
-        // Пытаемся атаковать через AttackHandler
         if (context.attackHandler != null && context.attackHandler.CurrentProfile != null)
         {
-            if (context.attackHandler.CanAttack) // проверяем кулдаун внутри хендлера
+            if (context.attackHandler.CanAttack)
             {
                 context.attackHandler.PerformAttack(context, context.player);
-                // Анимацию запускаем здесь, если её нет внутри PerformAttack
                 if (context.animator != null)
                     context.animator.PlayAttack();
             }
         }
         else
         {
-            // Fallback на старую логику (если хендлер или профиль отсутствуют)
+            // Fallback на старую логику
             if (context.HasMeleeAttack)
                 TryMeleeAttack_Fallback();
             else if (context.HasRangedAttack)
                 TryRangedAttack_Fallback();
             else
-                context.StateMachine.ChangeState(new ChaseState(context));
+                ai.GetStateMachine().ChangeState(new ChaseState(context, ai));
         }
     }
 

@@ -16,23 +16,19 @@ public class BossRageState : IState
     public void Enter()
     {
         rageStartTime = Time.time;
-        context.animator.Isrunning(true); // визуальный эффект
-        Debug.Log("Boss enters RAGE mode!");
-        // Увеличиваем скорость атаки (переопределим в атаках через проверку состояния)
+        context.animator.Isrunning(true); 
     }
 
     public void Update()
     {
         if (Time.time >= rageStartTime + rageDuration)
         {
-            // Возврат к обычному режиму
+            // Г‚Г®Г§ГўГ°Г ГІ ГЄ Г®ГЎГ»Г·Г­Г®Г¬Гі Г°ГҐГ¦ГЁГ¬Гі
             ai.GetStateMachine().ChangeState(new BossAttackState(context, ai));
             return;
         }
 
-        // В состоянии ярости – продолжаем атаковать (можно перейти в BossAttackState, но с флагом)
-        // Для простоты: оставляем текущее состояние, но атаки обрабатываются через отдельный механизм.
-        // Лучше перейти в BossAttackState, но с модификатором.
+        
     }
 
     public void Exit() { }

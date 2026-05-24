@@ -960,8 +960,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.19852386, y: 0.6673768, z: 0.74934494}
-  m_Center: {x: -0.014830926, y: -0.14079863, z: 0.3682732}
+  m_Size: {x: 0.05121044, y: 0.36320657, z: 0.4673536}
+  m_Center: {x: -0.0024678141, y: 0.011286363, z: 0.22727925}
 --- !u!54 &4402262972550581721
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -3605,11 +3605,11 @@ MonoBehaviour:
   meleeAttack: {fileID: 4163897807896888549}
   rangedAttack: {fileID: -7685290295958441562}
   isPeaceful: 0
-  healthThresholdToFlee: 0.3
+  healthThresholdToFlee: 0.5
   attackRangeBuffer: 0.5
-  heavyAttackChance: 0.25
-  bossAttackCooldownNormal: 1.5
-  bossAttackCooldownEnraged: 0.8
+  heavyAttackChance: 0.8
+  bossAttackCooldownNormal: 3
+  bossAttackCooldownEnraged: 1
   chaseRange: 15
   stopChaseRange: 25
   attackRange: 5
@@ -3619,7 +3619,7 @@ MonoBehaviour:
   fleeSpeed: 5
   minRoamDistance: 5
   maxRoamDistance: 15
-  reachedRoamPointDistance: 5
+  reachedRoamPointDistance: 10
   attackHandler: {fileID: 0}
   bossCombatController: {fileID: 7435951554184736290}
 --- !u!114 &8690943554797961845

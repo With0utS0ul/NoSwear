@@ -6,6 +6,7 @@ public class EnemyStateMachineAI : MonoBehaviour
 {
     private StateMachine stateMachine;
     private EnemyContext context;
+    private IEnemyStateFactory stateFactory;
     private bool isBoss;
     private bool isAggro = false;
 
@@ -19,21 +20,13 @@ public class EnemyStateMachineAI : MonoBehaviour
         }
 
         stateMachine = new StateMachine();
-        context.StateMachine = stateMachine;
+        // ГЃГ®Г«ГјГёГҐ Г­ГҐ Г±Г®ГµГ°Г Г­ГїГҐГ¬ StateMachine Гў ГЄГ®Г­ГІГҐГЄГ±ГІГҐ
         isBoss = GetComponent<BossTag>() != null;
 
-        context.agent = context.agent ??
-                        GetComponent<NavMeshAgent>() ??
-                        GetComponentInParent<NavMeshAgent>() ??
-                        GetComponentInChildren<NavMeshAgent>();
-        context.enemyView = context.enemyView ??
-                           GetComponent<EnemyView>() ??
-                           GetComponentInParent<EnemyView>() ??
-                           GetComponentInChildren<EnemyView>();
-        context.animator = context.animator ??
-                           GetComponent<EnemyAnimator>() ??
-                           GetComponentInParent<EnemyAnimator>() ??
-                           GetComponentInChildren<EnemyAnimator>();
+        // Г€Г­ГЁГ¶ГЁГ Г«ГЁГ§Г Г¶ГЁГї ГЄГ®Г¬ГЇГ®Г­ГҐГ­ГІГ®Гў (Г®Г±ГІГ ГўГ«ГїГҐГ¬ ГЎГҐГ§ ГЁГ§Г¬ГҐГ­ГҐГ­ГЁГ©)
+        context.agent = context.agent ?? GetComponent<NavMeshAgent>() ?? GetComponentInParent<NavMeshAgent>() ?? GetComponentInChildren<NavMeshAgent>();
+        context.enemyView = context.enemyView ?? GetComponent<EnemyView>() ?? GetComponentInParent<EnemyView>() ?? GetComponentInChildren<EnemyView>();
+        context.animator = context.animator ?? GetComponent<EnemyAnimator>() ?? GetComponentInParent<EnemyAnimator>() ?? GetComponentInChildren<EnemyAnimator>();
         if (context.meleeAttack == null)
             context.meleeAttack = GetComponent<EnemyAttack>() ?? GetComponentInParent<EnemyAttack>() ?? GetComponentInChildren<EnemyAttack>();
         if (context.rangedAttack == null)
@@ -42,23 +35,20 @@ public class EnemyStateMachineAI : MonoBehaviour
 
         if (context.agent == null)
         {
-            Debug.LogError($"[{name}] EnemyStateMachineAI: NavMeshAgent not found. Attach AI to same prefab root as agent.");
+            Debug.LogError($"[{name}] EnemyStateMachineAI: NavMeshAgent not found.");
             enabled = false;
             return;
         }
 
-        // Для обычных врагов
+        // Г€Г­ГЁГ¶ГЁГ Г«ГЁГ§Г Г¶ГЁГї AttackHandler Г¤Г«Гї Г®ГЎГ»Г·Г­Г»Гµ ГўГ°Г ГЈГ®Гў
         if (!isBoss)
         {
             var handler = GetComponent<EnemyAttackHandler>();
             if (handler == null) handler = gameObject.AddComponent<EnemyAttackHandler>();
             context.attackHandler = handler;
-            // Загружаем все профили из папки Resources/AttackProfiles
             AttackProfile[] allProfiles = Resources.LoadAll<AttackProfile>("AttackProfiles");
-            // Фильтруем по ближнему/дальнему (определяем по наличию MagAttack или по тегу)
-            bool isMeleeEnemy = GetComponent<MagAttack>() == null; // если нет MagAttack – ближний
+            bool isMeleeEnemy = GetComponent<MagAttack>() == null;
             var suitable = System.Array.FindAll(allProfiles, p => p.isMelee == isMeleeEnemy);
-
             if (suitable.Length > 0)
             {
                 var randomProfile = suitable[Random.Range(0, suitable.Length)];
@@ -69,18 +59,15 @@ public class EnemyStateMachineAI : MonoBehaviour
         bool servicePeaceful = GameEntryPoint.Instance?.PeacefulModeService?.IsPeaceful ?? false;
         context.isPeaceful = servicePeaceful;
 
-        if (isBoss)
-            stateMachine.ChangeState(new BossIdleState(context, this));
-        else
-            stateMachine.ChangeState(new IdleState(context));
+        // Г€Г±ГЇГ®Г«ГјГ§ГіГҐГ¬ ГґГ ГЎГ°ГЁГЄГі Г¤Г«Гї Г±Г®Г§Г¤Г Г­ГЁГї Г­Г Г·Г Г«ГјГ­Г®ГЈГ® Г±Г®Г±ГІГ®ГїГ­ГЁГї
+        stateFactory = new EnemyStateFactory(context, this);
+        IState initialState = stateFactory.GetInitialState();
+        stateMachine.ChangeState(initialState);
     }
 
     private void Update()
     {
-        if (context == null || context.agent == null)
-            return;
-
-        if (!context.agent.enabled)
+        if (context == null || context.agent == null || !context.agent.enabled)
             return;
 
         if (!context.agent.isOnNavMesh && NavMesh.SamplePosition(transform.position, out NavMeshHit hit, 5f, NavMesh.AllAreas))
@@ -104,33 +91,27 @@ public class EnemyStateMachineAI : MonoBehaviour
         {
             isAggro = true;
             if (!(stateMachine.GetCurrentState() is BossDeathState))
-                stateMachine.ChangeState(new BossChaseState(context, this));
+                stateMachine.ChangeState(stateFactory.CreateChaseState());
             return;
         }
 
         if (isBoss)
-        {
             return;
-        }
 
         if (context.isPeaceful && context.IsLowHealth)
-            stateMachine.ChangeState(new FleeState(context));
+            stateMachine.ChangeState(stateFactory.CreateFleeState());
     }
 
     public bool IsBoss => isBoss;
     public bool IsAggro => isAggro;
     public StateMachine GetStateMachine() => stateMachine;
+    public IEnemyStateFactory StateFactory => stateFactory; // Г¤Г®Г±ГІГіГЇ Г¤Г«Гї Г±Г®Г±ГІГ®ГїГ­ГЁГ©, ГҐГ±Г«ГЁ Г­ГіГ¦Г­Г®
 
     private Transform ResolvePlayerTransform()
     {
         var byTag = GameObject.FindGameObjectWithTag("Player");
-        if (byTag != null)
-            return byTag.transform;
-
+        if (byTag != null) return byTag.transform;
         var playerController = FindObjectOfType<PlayerController>();
-        if (playerController != null)
-            return playerController.transform;
-
-        return null;
+        return playerController != null ? playerController.transform : null;
     }
 }

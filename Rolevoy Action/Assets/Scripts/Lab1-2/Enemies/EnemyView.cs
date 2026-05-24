@@ -55,6 +55,9 @@ public class EnemyView : MonoBehaviour
                     animator.SetTrigger("Death");
                     
                 }
+                bool isBoss = GetComponent<BossTag>() != null;
+                EnemyView enemyView = GetComponent<EnemyView>();
+                ScoreManager.Instance?.RegisterEnemyDeath(enemyView,isBoss);
                 Destroy(gameObject, 1.0f);
             }
         };

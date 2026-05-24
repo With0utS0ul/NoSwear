@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using TMPro;
 
 public class GameOverUI : MonoBehaviour
 {
@@ -31,5 +32,15 @@ public class GameOverUI : MonoBehaviour
     {
         Time.timeScale = 1;
         SceneManager.LoadScene("MainMenu");
+    }
+
+    public void ShowVictory()
+    {
+        // Меняем текст, если есть
+        var text = panel.GetComponentInChildren<TMP_Text>();
+        if (text != null) text.text = "VICTORY!";
+
+        panel.SetActive(true);
+        Time.timeScale = 0;
     }
 }

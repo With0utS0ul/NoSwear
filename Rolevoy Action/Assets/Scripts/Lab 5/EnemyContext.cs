@@ -34,7 +34,7 @@ public class EnemyContext : MonoBehaviour, IEnemyPeacefulHandler
     public float maxRoamDistance = 15f;
     public float reachedRoamPointDistance = 1f;
 
-    public StateMachine StateMachine { get; set; }
+    
 
     public bool IsLowHealth =>
         enemyView != null &&
@@ -70,6 +70,7 @@ public class EnemyContext : MonoBehaviour, IEnemyPeacefulHandler
 
     public EnemyAttackHandler attackHandler;
     public BossCombatController bossCombatController;
+
     private void Start()
     {
         GameEntryPoint.Instance?.PeacefulModeService?.RegisterEnemy(this);

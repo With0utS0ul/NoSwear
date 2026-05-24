@@ -32,7 +32,7 @@ public class BossIdleState : IState
     {
         if (ctx.IsDead)
         {
-            ctx.StateMachine.ChangeState(new BossDeathState(ctx, ai));
+            ai.GetStateMachine().ChangeState(new BossDeathState(ctx, ai));
             return;
         }
 
@@ -41,7 +41,7 @@ public class BossIdleState : IState
 
         if (shouldAggroInNormalMode || shouldAggroInPeacefulMode)
         {
-            ctx.StateMachine.ChangeState(new BossChaseState(ctx, ai));
+            ai.GetStateMachine().ChangeState(new BossChaseState(ctx, ai));
             return;
         }
 

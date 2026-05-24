@@ -1,15 +1,16 @@
-using System.Collections;
 using UnityEngine;
 
 public class StaggerState : IState
 {
-    private EnemyContext context;
+    private readonly EnemyContext context;
+    private readonly EnemyStateMachineAI ai;
     private float staggerDuration = 1f;
     private float enterTime;
 
-    public StaggerState(EnemyContext context)
+    public StaggerState(EnemyContext context, EnemyStateMachineAI ai)
     {
         this.context = context;
+        this.ai = ai;
     }
 
     public void Enter()
@@ -23,11 +24,10 @@ public class StaggerState : IState
     {
         if (Time.time >= enterTime + staggerDuration)
         {
-            // Возврат к прежнему состоянию (Chase или Attack)
             if (context.DistanceToPlayer <= context.attackRange)
-                context.GetComponent<StateMachine>().ChangeState(new AttackState(context));
+                ai.GetStateMachine().ChangeState(new AttackState(context, ai));
             else
-                context.GetComponent<StateMachine>().ChangeState(new ChaseState(context));
+                ai.GetStateMachine().ChangeState(new ChaseState(context, ai));
         }
     }
 
