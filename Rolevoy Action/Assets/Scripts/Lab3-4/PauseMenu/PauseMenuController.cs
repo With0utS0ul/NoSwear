@@ -37,27 +37,35 @@ public class PauseMenuController
     {
         peacefulService.IsPeaceful = isOn;
         Debug.Log("Peaceful mode: " + (isOn ? "ON" : "OFF"));
+       
     }
 
     private void Resume()
     {
         view.root.SetActive(false);
         Time.timeScale = 1;
+        
+
+
+
     }
 
     private void Exit()
     {
         Time.timeScale = 1;
         SceneManager.LoadScene("MainMenu");
+        
     }
 
     private void Save()
     {
         interactor.SaveGame(player, playerController);
+        
     }
 
     private void Load()
     {
         interactor.LoadGame(player, playerController);
+        
     }
 }

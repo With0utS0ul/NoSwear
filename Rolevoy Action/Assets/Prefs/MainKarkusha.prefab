@@ -552,7 +552,6 @@ GameObject:
   - component: {fileID: 3597742057296955520}
   - component: {fileID: 5689871250460098181}
   - component: {fileID: 5884717558803421901}
-  - component: {fileID: 6142093820638510352}
   m_Layer: 0
   m_Name: Sword
   m_TagString: MK_spear
@@ -647,8 +646,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1.5133429, y: 2.1342766, z: 3.8603296}
-  m_Center: {x: -0.5215944, y: -0.56712615, z: 4.9558434}
+  m_Size: {x: 1.0457095, y: 0.91374123, z: 1.0683631}
+  m_Center: {x: -0.6366072, y: -0.69303113, z: 5.242312}
 --- !u!54 &5884717558803421901
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -676,21 +675,6 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!114 &6142093820638510352
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3885285800053570395}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: faca7010262455b4593f2cf9a449ae1d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  damage: 15
-  damageType: 0
-  triggerCollider: {fileID: 5689871250460098181}
 --- !u!1 &6423785926118225084
 GameObject:
   m_ObjectHideFlags: 0
@@ -1228,6 +1212,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   animator: {fileID: 848073538027495438}
   deathDelay: 2
+  damageDelay: 0.5
 --- !u!114 &3257035856167823408
 MonoBehaviour:
   m_ObjectHideFlags: 0

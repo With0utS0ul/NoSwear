@@ -11,7 +11,7 @@ public class Projectile : MonoBehaviour
     private DamageType damageType;
     private Vector3 direction;
 
-    public void Init(Vector3 dir, float dmg, DamageType type)
+    public void Init(Vector3 dir, float dmg, DamageType type, float speed) 
     {
         direction = dir.normalized;
         damage = dmg;

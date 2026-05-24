@@ -39,7 +39,16 @@ public class BossAttackState : IState
 
         float dist = context.DistanceToPlayer;
 
-        if (dist > context.attackRange + 1.0f)
+        float effectiveRange = context.attackRange;
+        float chaseThreshold = context.attackRange + context.attackRangeBuffer;
+
+        if (context.bossCombatController?.CurrentProfile?.weaponType == BossWeaponType.Ranged)
+        {
+            effectiveRange = context.rangedOptimalDistance;
+            chaseThreshold = effectiveRange + 2f;
+        }
+
+        if (dist > chaseThreshold)
         {
             ai.GetStateMachine().ChangeState(new BossChaseState(context, ai));
             return;
@@ -56,10 +65,27 @@ public class BossAttackState : IState
                 return;
             }
 
-            context.enemyView.Enemy.Attack();
-            if (context.animator != null)
-                context.animator.PlayAttack();
-            lastAttackTime = Time.time;
+            // --- ИЗМЕНЕНИЕ: проверка готовности дальнего боя ---
+            if (context.bossCombatController?.CurrentProfile?.weaponType == BossWeaponType.Ranged)
+            {
+                if (context.bossCombatController.CanDoRangedAttack())
+                {
+                    context.bossCombatController.PerformRangedAttack(context.player);
+                    if (context.animator != null)
+                        context.animator.PlayAttack();
+                    lastAttackTime = Time.time; // обновляем, только если была реальная атака
+                }
+                // иначе ничего не делаем, ждём следующего кадра
+            }
+            else
+            {
+                // ближний бой – как обычно
+                context.bossCombatController?.PerformAttack(context.player);
+                if (context.animator != null)
+                    context.animator.PlayAttack();
+                lastAttackTime = Time.time;
+            }
+            // --- КОНЕЦ ИЗМЕНЕНИЯ ---
         }
     }
 

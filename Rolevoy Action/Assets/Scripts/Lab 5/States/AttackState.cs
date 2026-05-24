@@ -1,13 +1,14 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 public class AttackState : IState
 {
-    private readonly EnemyContext context;
-    private float lastAttackTime;
+    protected readonly EnemyContext context;
+    protected readonly EnemyStateMachineAI ai;
 
-    public AttackState(EnemyContext context)
+    public AttackState(EnemyContext context, EnemyStateMachineAI ai)
     {
         this.context = context;
+        this.ai = ai;
     }
 
     public virtual void Enter()
@@ -18,29 +19,28 @@ public class AttackState : IState
             context.animator.Iswalking(false);
             context.animator.Isrunning(false);
         }
-        lastAttackTime = Time.time - 999f;
     }
 
     public virtual void Update()
     {
         if (context.IsDead)
         {
-            context.StateMachine.ChangeState(new DeathState(context));
+            ai.GetStateMachine().ChangeState(new DeathState(context, ai));
             return;
         }
 
         if (context.player == null)
         {
-            context.StateMachine.ChangeState(new IdleState(context));
+            ai.GetStateMachine().ChangeState(new IdleState(context, ai));
             return;
         }
 
         if (context.isPeaceful)
         {
             if (context.IsLowHealth)
-                context.StateMachine.ChangeState(new FleeState(context));
+                ai.GetStateMachine().ChangeState(new FleeState(context, ai));
             else
-                context.StateMachine.ChangeState(new IdleState(context));
+                ai.GetStateMachine().ChangeState(new IdleState(context, ai));
             return;
         }
 
@@ -50,55 +50,47 @@ public class AttackState : IState
 
         if (outOfMelee || outOfRanged)
         {
-            context.StateMachine.ChangeState(new ChaseState(context));
+            ai.GetStateMachine().ChangeState(new ChaseState(context, ai));
             return;
         }
 
         RotateTowardsPlayer();
 
-        if (context.HasMeleeAttack)
+        if (context.attackHandler != null && context.attackHandler.CurrentProfile != null)
         {
-            TryMeleeAttack();
-            return;
+            if (context.attackHandler.CanAttack)
+            {
+                context.attackHandler.PerformAttack(context, context.player);
+                if (context.animator != null)
+                    context.animator.PlayAttack();
+            }
         }
-
-        if (context.HasRangedAttack)
+        else
         {
-            TryRangedAttack();
-            return;
+            // Fallback на старую логику
+            if (context.HasMeleeAttack)
+                TryMeleeAttack_Fallback();
+            else if (context.HasRangedAttack)
+                TryRangedAttack_Fallback();
+            else
+                ai.GetStateMachine().ChangeState(new ChaseState(context, ai));
         }
-
-        context.StateMachine.ChangeState(new ChaseState(context));
     }
 
-    private void TryMeleeAttack()
+    private void TryMeleeAttack_Fallback()
     {
-        if (context.meleeAttack == null)
-            return;
-        if (Time.time < lastAttackTime + context.meleeAttack.CoolDown)
-            return;
-        if (!context.meleeAttack.CanAttack)
-            return;
-
+        if (context.meleeAttack == null) return;
+        if (!context.meleeAttack.CanAttack) return;
         context.meleeAttack.TryAttackPlayer();
-        if (context.animator != null)
-            context.animator.PlayAttack();
-        lastAttackTime = Time.time;
+        if (context.animator != null) context.animator.PlayAttack();
     }
 
-    private void TryRangedAttack()
+    private void TryRangedAttack_Fallback()
     {
-        if (context.rangedAttack == null)
-            return;
-        if (Time.time < lastAttackTime + context.rangedAttack.CoolDown)
-            return;
-        if (!context.rangedAttack.CanAttack)
-            return;
-
+        if (context.rangedAttack == null) return;
+        if (!context.rangedAttack.CanAttack) return;
         context.rangedAttack.TryAttackPlayer(context.player);
-        if (context.animator != null)
-            context.animator.PlayAttack();
-        lastAttackTime = Time.time;
+        if (context.animator != null) context.animator.PlayAttack();
     }
 
     private void RotateTowardsPlayer()

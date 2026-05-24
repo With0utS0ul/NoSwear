@@ -13,6 +13,7 @@ public class Player : Entity
 
     private float magicCooldown = 2f;
     private float lastMagicTime;
+    private float speed = 1f;
     public Player(IHealth health, IDamageService damageService)
     {
         this.health = health;
@@ -35,7 +36,7 @@ public class Player : Entity
         if (projectilePrefab == null || firePoint == null) return;
         var projectileObj = Object.Instantiate(projectilePrefab, firePoint.position, firePoint.rotation);
         var projectile = projectileObj.GetComponent<Projectile>();
-        projectile?.Init(firePoint.forward, MagicDamage, DamageType.Magical);
+        projectile?.Init(firePoint.forward, MagicDamage, DamageType.Magical, speed);
     }
     public float GetMagicCooldown01()
     {

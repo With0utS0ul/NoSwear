@@ -6,6 +6,7 @@ public class GameSceneEntryPoint : MonoBehaviour
     [SerializeField] private PlayerController playerController;
     [SerializeField] private EntityView playerView;
     [SerializeField] private GameOverUI gameOverUI;
+    [SerializeField] private ScoreManager scoreManager;
 
     private Player player;
 
@@ -26,6 +27,7 @@ public class GameSceneEntryPoint : MonoBehaviour
         player = new Player(health, damageService);
 
         player.OnDeath += () => gameOverUI.Show();
+        scoreManager.OnVictory.AddListener(ShowVictoryUI);
 
         playerView.Init(player);
         playerController.Init(player);
@@ -62,5 +64,17 @@ public class GameSceneEntryPoint : MonoBehaviour
         gameOverUI.Show();
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
+    }
+
+    private void ShowVictoryUI()
+    {
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+        if (gameOverUI != null)
+            gameOverUI.ShowVictory();
+
+        
+        else
+            Debug.LogError("GameOverUI not assigned in GameSceneEntryPoint");
     }
 }

@@ -5,15 +5,15 @@ using UnityEngine.AI;
 public class Spawner : MonoBehaviour
 {
     [Header("Enemy Types")]
-    [SerializeField] private List<GameObject> enemyPrefabs; // список префабов врагов
+    [SerializeField] private List<GameObject> enemyPrefabs;
 
     [Header("Spawn Settings")]
-    [SerializeField] private int totalEnemies = 5;           // общее количество врагов
-    [SerializeField] private float spawnRadius = 20f;        // радиус зоны спавна (вокруг объекта)
-    [SerializeField] private float minDistanceBetween = 3f;  // минимальное расстояние между врагами
+    [SerializeField] private int totalEnemies = 5;   
+    [SerializeField] private float spawnRadius = 20f; 
+    [SerializeField] private float minDistanceBetween = 3f;
 
     [Header("Alternative Area (rect)")]
-    [SerializeField] private bool useAreaBounds = false;     // использовать прямоугольную область
+    [SerializeField] private bool useAreaBounds = false; 
     [SerializeField] private Vector3 areaMin = new Vector3(-30, 0, -30);
     [SerializeField] private Vector3 areaMax = new Vector3(30, 0, 30);
 

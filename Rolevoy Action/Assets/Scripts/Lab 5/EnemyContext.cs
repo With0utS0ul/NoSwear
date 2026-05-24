@@ -33,7 +33,7 @@ public class EnemyContext : MonoBehaviour, IEnemyPeacefulHandler
     public float maxRoamDistance = 15f;
     public float reachedRoamPointDistance = 1f;
 
-    public StateMachine StateMachine { get; set; }
+    
 
     public bool IsLowHealth =>
         enemyView != null &&
@@ -51,6 +51,7 @@ public class EnemyContext : MonoBehaviour, IEnemyPeacefulHandler
     public bool HasMeleeAttack => meleeAttack != null;
     public bool HasRangedAttack => rangedAttack != null;
     public float DistanceToPlayer => player == null ? float.MaxValue : Vector3.Distance(transform.position, player.position);
+    public bool HasValidAttack => attackHandler != null && attackHandler.CurrentProfile != null;
     public bool CanAttackNow =>
         HasMeleeAttack ? meleeAttack.CanAttack :
         HasRangedAttack && rangedAttack.CanAttack;
@@ -65,6 +66,9 @@ public class EnemyContext : MonoBehaviour, IEnemyPeacefulHandler
             return hpPercent < 0.5f ? bossAttackCooldownEnraged : bossAttackCooldownNormal;
         }
     }
+
+    public EnemyAttackHandler attackHandler;
+    public BossCombatController bossCombatController;
 
     private void Start()
     {

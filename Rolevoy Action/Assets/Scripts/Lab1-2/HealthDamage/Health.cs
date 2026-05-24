@@ -3,6 +3,7 @@ using System;
 
 public class Health : IHealth
 {
+    private bool isDead = false;
     public float Current { get; private set; }
     public float Max { get; private set; }
 
@@ -18,14 +19,20 @@ public class Health : IHealth
 
     public void Take(float value)
     {
-        
-        Debug.Log($"TAKE DAMAGE: {value}");
+
+        if (isDead) return;  // защита
+
         Current -= value;
         if (Current < 0) Current = 0;
         OnHealthChanged?.Invoke(Current);
-        if (Current <= 0)
+
+        if (Current <= 0 && !isDead)
+        {
+            isDead = true;
             OnDeath?.Invoke();
-        if (Current>0)
+        }
+
+        if (Current > 0)
             OnDamage?.Invoke();
     }
 

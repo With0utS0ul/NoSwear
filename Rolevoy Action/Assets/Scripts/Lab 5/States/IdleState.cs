@@ -4,12 +4,14 @@ using UnityEngine.AI;
 public class IdleState : IState
 {
     private readonly EnemyContext ctx;
+    private readonly EnemyStateMachineAI ai;
     private Vector3 patrolTarget;
     private float nextRoamRefreshTime;
 
-    public IdleState(EnemyContext context)
+    public IdleState(EnemyContext context, EnemyStateMachineAI ai)
     {
-        ctx = context;
+        this.ctx = context;
+        this.ai = ai;
     }
 
     public void Enter()
@@ -30,19 +32,19 @@ public class IdleState : IState
     {
         if (ctx.IsDead)
         {
-            ctx.StateMachine.ChangeState(new DeathState(ctx));
+            ai.GetStateMachine().ChangeState(new DeathState(ctx, ai));
             return;
         }
 
         if (ctx.player != null && !ctx.isPeaceful && ctx.DistanceToPlayer <= ctx.chaseRange)
         {
-            ctx.StateMachine.ChangeState(new ChaseState(ctx));
+            ai.GetStateMachine().ChangeState(new ChaseState(ctx, ai));
             return;
         }
 
         if (ctx.isPeaceful && ctx.IsLowHealth)
         {
-            ctx.StateMachine.ChangeState(new FleeState(ctx));
+            ai.GetStateMachine().ChangeState(new FleeState(ctx, ai));
             return;
         }
 

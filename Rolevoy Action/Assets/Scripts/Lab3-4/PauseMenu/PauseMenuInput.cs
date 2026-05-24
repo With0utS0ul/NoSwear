@@ -11,6 +11,7 @@ public class PauseMenuInput : MonoBehaviour
             bool isActive = view.root.activeSelf;
 
             view.root.SetActive(!isActive);
+            
             Time.timeScale = isActive ? 1 : 0;
         }
     }

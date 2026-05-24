@@ -4,8 +4,13 @@ using UnityEngine.AI;
 public class ChaseState : IState
 {
     private readonly EnemyContext ctx;
+    private readonly EnemyStateMachineAI ai;
 
-    public ChaseState(EnemyContext context) => ctx = context;
+    public ChaseState(EnemyContext context, EnemyStateMachineAI ai)
+    {
+        this.ctx = context;
+        this.ai = ai;
+    }
 
     public void Enter()
     {
@@ -19,19 +24,19 @@ public class ChaseState : IState
     {
         if (ctx.IsDead)
         {
-            ctx.StateMachine.ChangeState(new DeathState(ctx));
+            ai.GetStateMachine().ChangeState(new DeathState(ctx, ai));
             return;
         }
 
         if (ctx.isPeaceful)
         {
-            ctx.StateMachine.ChangeState(new IdleState(ctx));
+            ai.GetStateMachine().ChangeState(new IdleState(ctx, ai));
             return;
         }
 
         if (ctx.player == null)
         {
-            ctx.StateMachine.ChangeState(new IdleState(ctx));
+            ai.GetStateMachine().ChangeState(new IdleState(ctx, ai));
             return;
         }
 
@@ -39,13 +44,13 @@ public class ChaseState : IState
 
         if (dist > ctx.stopChaseRange)
         {
-            ctx.StateMachine.ChangeState(new IdleState(ctx));
+            ai.GetStateMachine().ChangeState(new IdleState(ctx, ai));
             return;
         }
 
         if (ctx.HasMeleeAttack && dist <= ctx.attackRange + ctx.attackRangeBuffer)
         {
-            ctx.StateMachine.ChangeState(new AttackState(ctx));
+            ai.GetStateMachine().ChangeState(new AttackState(ctx, ai));
             return;
         }
 
@@ -55,7 +60,7 @@ public class ChaseState : IState
             float max = ctx.rangedOptimalDistance + 1.5f;
             if (dist >= min && dist <= max)
             {
-                ctx.StateMachine.ChangeState(new AttackState(ctx));
+                ai.GetStateMachine().ChangeState(new AttackState(ctx, ai));
                 return;
             }
             RepositionForRanged(dist);

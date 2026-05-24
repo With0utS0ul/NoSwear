@@ -1,3 +1,4 @@
+using System.Runtime.InteropServices;
 using UnityEngine;
 
 public class EnemyView : MonoBehaviour
@@ -16,10 +17,12 @@ public class EnemyView : MonoBehaviour
     [SerializeField] private GameObject projectilePrefab;
     [SerializeField] private float rangedDamage = 10f;
     [SerializeField] private float hitReactionCooldown = 0.25f;
+    [SerializeField] private float speed = 1f;
 
     private Animator animator;
     private float lastHitReactionTime = -999f;
 
+    public float RangedDamage => rangedDamage;
     private void Awake()
     {
         animator = GetComponent<Animator>();
@@ -52,6 +55,9 @@ public class EnemyView : MonoBehaviour
                     animator.SetTrigger("Death");
                     
                 }
+                bool isBoss = GetComponent<BossTag>() != null;
+                EnemyView enemyView = GetComponent<EnemyView>();
+                ScoreManager.Instance?.RegisterEnemyDeath(enemyView,isBoss);
                 Destroy(gameObject, 1.0f);
             }
         };
@@ -60,7 +66,7 @@ public class EnemyView : MonoBehaviour
             attack = new MeleeAttack(meleeWeapon);
 
         if (useRanged && firePoint != null && projectilePrefab != null)
-            attack = new RangedAttack(firePoint, projectilePrefab, rangedDamage);
+            attack = new RangedAttack(firePoint, projectilePrefab, rangedDamage, speed);
 
         Enemy = new Enemy(health, attack);
     }

@@ -4,12 +4,17 @@ using UnityEngine.AI;
 public class FleeState : IState
 {
     private readonly EnemyContext ctx;
+    private readonly EnemyStateMachineAI ai;
     private const float FleeDistance = 12f;
     private const float RepathInterval = 0.35f;
     private float startTime;
     private float nextRepathTime;
 
-    public FleeState(EnemyContext context) => ctx = context;
+    public FleeState(EnemyContext context, EnemyStateMachineAI ai)
+    {
+        this.ctx = context;
+        this.ai = ai;
+    }
 
     public void Enter()
     {
@@ -21,7 +26,7 @@ public class FleeState : IState
         nextRepathTime = Time.time;
         if (ctx.player == null)
         {
-            ctx.StateMachine.ChangeState(new IdleState(ctx));
+            ai.GetStateMachine().ChangeState(new IdleState(ctx, ai));
             return;
         }
         SetFleeDestination();
@@ -31,19 +36,19 @@ public class FleeState : IState
     {
         if (ctx.IsDead)
         {
-            ctx.StateMachine.ChangeState(new DeathState(ctx));
+            ai.GetStateMachine().ChangeState(new DeathState(ctx, ai));
             return;
         }
 
         if (!ctx.isPeaceful)
         {
-            ctx.StateMachine.ChangeState(new IdleState(ctx));
+            ai.GetStateMachine().ChangeState(new IdleState(ctx, ai));
             return;
         }
 
         if (ctx.player == null)
         {
-            ctx.StateMachine.ChangeState(new IdleState(ctx));
+            ai.GetStateMachine().ChangeState(new IdleState(ctx, ai));
             return;
         }
 
@@ -55,7 +60,7 @@ public class FleeState : IState
 
         if (!ctx.IsLowHealth && Time.time > startTime + 1.0f)
         {
-            ctx.StateMachine.ChangeState(new IdleState(ctx));
+            ai.GetStateMachine().ChangeState(new IdleState(ctx, ai));
         }
     }
 
