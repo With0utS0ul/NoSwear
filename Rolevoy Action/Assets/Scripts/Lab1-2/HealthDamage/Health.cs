@@ -20,7 +20,7 @@ public class Health : IHealth
     public void Take(float value)
     {
 
-        if (isDead) return;  // защита
+        if (isDead) return;
 
         Current -= value;
         if (Current < 0) Current = 0;
@@ -28,8 +28,11 @@ public class Health : IHealth
 
         if (Current <= 0 && !isDead)
         {
+            
+            
             isDead = true;
             OnDeath?.Invoke();
+
         }
 
         if (Current > 0)

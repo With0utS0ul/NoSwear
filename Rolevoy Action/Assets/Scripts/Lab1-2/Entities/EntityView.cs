@@ -66,8 +66,10 @@ public class EntityView : MonoBehaviour, IDamageable
     private void OnDestroy()
     {
         if (entity != null)
+        {
             entity.OnDeath -= OnDeath;
             entity.OnDamage -= OnDamage;
+        }
         
     }
 }

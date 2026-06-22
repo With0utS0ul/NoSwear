@@ -1,40 +1,34 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Events;
 
-public class ScoreManager : MonoBehaviour
+public class ScoreManager
 {
-    public static ScoreManager Instance { get; private set; }
+    public event Action<int> OnScoreChanged;
+    public event Action OnBossSpawned;
+    public event Action OnVictory;
 
-    [Header("Settings")]
-    [SerializeField] private int killsToSpawnBoss = 3;
-    [SerializeField] private int killsToWin = 5;
-    [SerializeField] private GameObject bossPrefab;
-    [SerializeField] private Transform bossSpawnPoint;
-
-    [Header("Events")]
-    public UnityEvent<int> OnScoreChanged; // текущее количество убийств
-    public UnityEvent OnBossSpawned;
-    public UnityEvent OnVictory;
+    private readonly int killsToSpawnBoss;
+    private readonly int killsToWin;
+    private readonly GameObject bossPrefab;
+    private Transform bossSpawnPoint;
 
     private int currentKills = 0;
     private bool bossSpawned = false;
     private bool victoryTriggered = false;
-    private HashSet<EnemyView> reportedDeaths = new HashSet<EnemyView>();
+    
 
-    private void Awake()
+    public ScoreManager(int killsToSpawnBoss, int killsToWin, GameObject bossPrefab, Transform bossSpawnPoint)
     {
-        if (Instance == null)
-            Instance = this;
-        else
-            Destroy(gameObject);
+        this.killsToSpawnBoss = killsToSpawnBoss;
+        this.killsToWin = killsToWin;
+        this.bossPrefab = bossPrefab;
+        this.bossSpawnPoint = bossSpawnPoint;
     }
 
     public void RegisterEnemyDeath(EnemyView enemy, bool isBoss = false)
     {
-        if (reportedDeaths.Contains(enemy)) return;
-        reportedDeaths.Add(enemy);
-
+        
         if (victoryTriggered) return;
 
         if (!isBoss)
@@ -43,18 +37,13 @@ public class ScoreManager : MonoBehaviour
             OnScoreChanged?.Invoke(currentKills);
 
             if (!bossSpawned && currentKills >= killsToSpawnBoss)
-            {
                 SpawnBoss();
-            }
 
             if (!victoryTriggered && currentKills >= killsToWin)
-            {
                 TriggerVictory();
-            }
         }
         else
         {
-            // Если босс убит – можно сразу победу (опционально)
             if (!victoryTriggered)
                 TriggerVictory();
         }
@@ -64,7 +53,8 @@ public class ScoreManager : MonoBehaviour
     {
         if (bossPrefab != null && bossSpawnPoint != null)
         {
-            Instantiate(bossPrefab, bossSpawnPoint.position, bossSpawnPoint.rotation);
+            // Статический вызов Instantiate
+            UnityEngine.Object.Instantiate(bossPrefab, bossSpawnPoint.position, bossSpawnPoint.rotation);
             bossSpawned = true;
             OnBossSpawned?.Invoke();
             Debug.Log("Boss spawned!");
@@ -75,31 +65,37 @@ public class ScoreManager : MonoBehaviour
         }
     }
 
+    public void UpdateSpawnPoint(Transform newSpawnPoint)
+    {
+        bossSpawnPoint = newSpawnPoint;
+    }
+
     private void TriggerVictory()
     {
         if (victoryTriggered) return;
         victoryTriggered = true;
-        OnVictory?.Invoke();
-        
 
-        // Проигрываем победную мелодию через AudioService
         var audio = GameEntryPoint.Instance?.AudioService;
         if (audio != null)
         {
-            // Предположим, у вас есть AudioClip victoryMusic, загрузите его
             AudioClip victoryClip = Resources.Load<AudioClip>("Music/Victory");
             if (victoryClip != null)
                 audio.PlayMusic(victoryClip);
             else
                 Debug.LogWarning("Victory music clip not found!");
         }
-
-
-     
-       
+        OnVictory?.Invoke();
     }
 
-   
-
     public int GetCurrentKills() => currentKills;
+
+    public void ResetScore()
+    {
+        currentKills = 0;
+        bossSpawned = false;
+        victoryTriggered = false;
+
+        // Оповещаем UI, что счет теперь равен 0
+        OnScoreChanged?.Invoke(currentKills);
+    }
 }

@@ -7,10 +7,11 @@ public class UIScoreboard : MonoBehaviour
 
     private void Start()
     {
-        if (ScoreManager.Instance != null)
+        var scoreManager = Bootstrapper.Instance?.ScoreManager;
+        if (scoreManager != null)
         {
-            ScoreManager.Instance.OnScoreChanged.AddListener(UpdateScore);
-            UpdateScore(ScoreManager.Instance.GetCurrentKills());
+            scoreManager.OnScoreChanged += UpdateScore;
+            UpdateScore(scoreManager.GetCurrentKills());
         }
     }
 
@@ -18,5 +19,12 @@ public class UIScoreboard : MonoBehaviour
     {
         if (scoreText != null)
             scoreText.text = $"Kills: {kills}";
+    }
+
+    private void OnDestroy()
+    {
+        var scoreManager = Bootstrapper.Instance?.ScoreManager;
+        if (scoreManager != null)
+            scoreManager.OnScoreChanged -= UpdateScore;
     }
 }

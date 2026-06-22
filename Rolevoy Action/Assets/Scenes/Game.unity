@@ -2387,39 +2387,14 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 521643659}
-  - component: {fileID: 521643658}
+  - component: {fileID: 521643660}
   m_Layer: 0
-  m_Name: ScoreManager
+  m_Name: Bootstrapper
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &521643658
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 521643657}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 540cbd9b322879b4db4dd5f6f897e10a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  killsToSpawnBoss: 3
-  killsToWin: 5
-  bossPrefab: {fileID: 1895212641966680, guid: 96ee56c28689b3048bda2e42ba78567d, type: 3}
-  bossSpawnPoint: {fileID: 1112399889}
-  OnScoreChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  OnBossSpawned:
-    m_PersistentCalls:
-      m_Calls: []
-  OnVictory:
-    m_PersistentCalls:
-      m_Calls: []
 --- !u!4 &521643659
 Transform:
   m_ObjectHideFlags: 0
@@ -2435,6 +2410,22 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &521643660
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 521643657}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1ed74036aff389c46864ac7e7b67c377, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  killsToSpawnBoss: 3
+  killsToWin: 5
+  bossPrefab: {fileID: 1895212641966680, guid: 96ee56c28689b3048bda2e42ba78567d, type: 3}
+  bossSpawnPoint: {fileID: 1112399889}
 --- !u!64 &531257763
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -2978,7 +2969,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!82 &1045313803
 AudioSource:
   m_ObjectHideFlags: 0
@@ -4779,10 +4770,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e7d63859fa7ac1499b97f763ecb6727, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  bossSpawnPoint: {fileID: 1112399889}
   playerController: {fileID: 1708709837}
   playerView: {fileID: 1708709839}
   gameOverUI: {fileID: 122411347}
-  scoreManager: {fileID: 521643658}
 --- !u!4 &1826785181
 Transform:
   m_ObjectHideFlags: 0

@@ -34,7 +34,7 @@ public class EnemyContext : MonoBehaviour, IEnemyPeacefulHandler
     public float maxRoamDistance = 15f;
     public float reachedRoamPointDistance = 1f;
 
-    
+   
 
     public bool IsLowHealth =>
         enemyView != null &&

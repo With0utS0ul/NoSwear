@@ -4,20 +4,23 @@ using UnityEngine.SceneManagement;
 public class PauseMenuController
 {
     private PauseMenuView view;
-    private GameInteractor interactor;
+    private SaveGameInteractor saveinteractor;
+    private LoadGameInteractor loadinteractor;
     private Player player;
     private PlayerController playerController;
     private IPeacefulModeService peacefulService;
 
     public PauseMenuController(
         PauseMenuView view,
-        GameInteractor interactor,
+        SaveGameInteractor saveinteractor,
+        LoadGameInteractor loadinteractor,
         Player player,
         PlayerController playerController,
         IPeacefulModeService peacefulService)
     {
         this.view = view;
-        this.interactor = interactor;
+        this.saveinteractor = saveinteractor;
+        this.loadinteractor = loadinteractor;
         this.player = player;
         this.playerController = playerController;
         this.peacefulService = peacefulService;
@@ -59,13 +62,13 @@ public class PauseMenuController
 
     private void Save()
     {
-        interactor.SaveGame(player, playerController);
+        saveinteractor.SaveGame(player, playerController);
         
     }
 
     private void Load()
     {
-        interactor.LoadGame(player, playerController);
+        loadinteractor.LoadGame(player, playerController);
         
     }
 }
