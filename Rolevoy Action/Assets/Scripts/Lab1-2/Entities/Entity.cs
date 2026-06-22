@@ -13,14 +13,21 @@ public abstract class Entity : IDamageable
 
     public virtual void ApplyDamage(Damage damage)
     {
-        if (!IsAlive) return;
+        if (!IsAlive)
+        {   
+            OnDeath?.Invoke(); 
+            return; 
+        }
 
         OnDamage?.Invoke();
         float total = damage.Physical + damage.Magical;
         health.Take(total);
+
         
         
 
-        
+
+
+
     }
 }

@@ -18,7 +18,13 @@ public class GameOverUI : MonoBehaviour
 
     public void Show()
     {
-        panel.SetActive(true);
+        Debug.Log("GameOverUI.Show() called");
+        if (panel == null) Debug.LogError("panel is null");
+        else
+        {
+            panel.SetActive(true);
+            Debug.Log("panel active = " + panel.activeSelf);
+        }
         Time.timeScale = 0;
     }
 

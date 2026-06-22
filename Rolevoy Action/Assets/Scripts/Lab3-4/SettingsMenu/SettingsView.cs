@@ -32,4 +32,14 @@ public class SettingsView : MonoBehaviour
     {
         UnityEngine.SceneManagement.SceneManager.LoadScene("MainMenu");
     }
+
+    private void OnDestroy()
+    {
+        // Очищаем подписки при уничтожении сцены (хороший тон в архитектуре)
+        if (volumeSlider != null)
+            volumeSlider.onValueChanged.RemoveListener(OnVolumeChanged);
+
+        if (backButton != null)
+            backButton.onClick.RemoveListener(OnBack);
+    }
 }
