@@ -20,25 +20,25 @@ public class EnemyWeaponHandler : MonoBehaviour
 
         lastAttackTime = Time.time;
 
-        // Âîñïðîèçâåäåíèå çâóêà
+        // Ã‚Ã®Ã±Ã¯Ã°Ã®Ã¨Ã§Ã¢Ã¥Ã¤Ã¥Ã­Ã¨Ã¥ Ã§Ã¢Ã³ÃªÃ 
         if (currentWeapon.attackSound != null)
             AudioSource.PlayClipAtPoint(currentWeapon.attackSound, context.transform.position);
 
-        // Ýôôåêò äëÿ äàëüíåãî îðóæèÿ
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         if (!currentWeapon.isMelee && currentWeapon.muzzleFlashPrefab != null)
             Instantiate(currentWeapon.muzzleFlashPrefab, context.transform.position, Quaternion.identity);
 
-        // Íàíåñåíèå óðîíà (ïðèìåð – ÷åðåç EnemyView)
+        // ÃÃ Ã­Ã¥Ã±Ã¥Ã­Ã¨Ã¥ Ã³Ã°Ã®Ã­Ã  (Ã¯Ã°Ã¨Ã¬Ã¥Ã° â€“ Ã·Ã¥Ã°Ã¥Ã§ EnemyView)
         if (target != null && context.enemyView != null && context.enemyView.Enemy != null)
         {
-            // Çäåñü âûçûâàåòñÿ ñóùåñòâóþùàÿ ñèñòåìà àòàêè âðàãà
+            // Ã‡Ã¤Ã¥Ã±Ã¼ Ã¢Ã»Ã§Ã»Ã¢Ã Ã¥Ã²Ã±Ã¿ Ã±Ã³Ã¹Ã¥Ã±Ã²Ã¢Ã³Ã¾Ã¹Ã Ã¿ Ã±Ã¨Ã±Ã²Ã¥Ã¬Ã  Ã Ã²Ã ÃªÃ¨ Ã¢Ã°Ã Ã£Ã 
             context.enemyView.Enemy.Attack();
         }
 
         
     }
 
-    // Äëÿ ïðîâåðêè òèïà îðóæèÿ â ChaseState
+    // Ã„Ã«Ã¿ Ã¯Ã°Ã®Ã¢Ã¥Ã°ÃªÃ¨ Ã²Ã¨Ã¯Ã  Ã®Ã°Ã³Ã¦Ã¨Ã¿ Ã¢ ChaseState
     public bool HasRangedWeapon => !currentWeapon.isMelee;
     public float GetOptimalDistance => currentWeapon.optimalDistance;
     public float GetAttackRange => currentWeapon.range;

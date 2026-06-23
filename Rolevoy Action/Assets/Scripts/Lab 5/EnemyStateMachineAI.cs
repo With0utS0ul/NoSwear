@@ -23,7 +23,7 @@ public class EnemyStateMachineAI : MonoBehaviour
         
         isBoss = GetComponent<BossTag>() != null;
 
-        // Инициализация компонентов
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
         context.agent = context.agent ?? GetComponent<NavMeshAgent>() ?? GetComponentInParent<NavMeshAgent>() ?? GetComponentInChildren<NavMeshAgent>();
         context.enemyView = context.enemyView ?? GetComponent<EnemyView>() ?? GetComponentInParent<EnemyView>() ?? GetComponentInChildren<EnemyView>();
         context.animator = context.animator ?? GetComponent<EnemyAnimator>() ?? GetComponentInParent<EnemyAnimator>() ?? GetComponentInChildren<EnemyAnimator>();
@@ -40,7 +40,7 @@ public class EnemyStateMachineAI : MonoBehaviour
             return;
         }
 
-        // Инициализация AttackHandler для обычных врагов
+        // Г€Г­ГЁГ¶ГЁГ Г«ГЁГ§Г Г¶ГЁГї AttackHandler Г¤Г«Гї Г®ГЎГ»Г·Г­Г»Гµ ГўГ°Г ГЈГ®Гў
         if (!isBoss)
         {
             var handler = GetComponent<EnemyAttackHandler>();
@@ -59,7 +59,7 @@ public class EnemyStateMachineAI : MonoBehaviour
         bool servicePeaceful = GameEntryPoint.Instance?.PeacefulModeService?.IsPeaceful ?? false;
         context.isPeaceful = servicePeaceful;
 
-        // Используем фабрику для создания начального состояния
+        // Г€Г±ГЇГ®Г«ГјГ§ГіГҐГ¬ ГґГ ГЎГ°ГЁГЄГі Г¤Г«Гї Г±Г®Г§Г¤Г Г­ГЁГї Г­Г Г·Г Г«ГјГ­Г®ГЈГ® Г±Г®Г±ГІГ®ГїГ­ГЁГї
         stateFactory = new EnemyStateFactory(context, this);
         IState initialState = stateFactory.GetInitialState();
         stateMachine.ChangeState(initialState);
