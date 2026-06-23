@@ -6,14 +6,14 @@ public class MagAttack : MonoBehaviour
     [SerializeField] private GameObject projectilePrefab;
     [SerializeField] private Transform firePoint;
 
-    // Эти параметры можно менять через профиль (цвет, скорость, но не урон)
+    // Эти параметры можно менять через профиль
     private float currentProjectileSpeed = 20f;
     private Color currentProjectileColor = Color.white;
 
     public bool CanAttack { get; private set; } = true;
     private float lastAttackTime;
 
-    private EnemyView enemyView; // получаем урон оттуда
+    private EnemyView enemyView; // получаем урон 
 
     public float CoolDown => coolDown;
 

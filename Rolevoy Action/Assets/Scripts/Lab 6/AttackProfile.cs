@@ -5,12 +5,12 @@ public class AttackProfile : ScriptableObject
 {
     public string profileName;
     public bool isMelee = true;
-    public float damage = 10f;        // можно использовать для изменения урона
-    public float cooldown = 1.5f;     // опционально
+    public float damage = 10f;
+    public float cooldown = 1.5f;
 
 
     [Header("Combat Distances")]
-    public float range = 2f;           // дальность атаки
+    public float range = 2f;
     public float optimalDistance = 7f; // оптимальная дистанция для ranged
 
 

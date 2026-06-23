@@ -4,29 +4,33 @@ using UnityEngine;
 public class GameSceneEntryPoint : MonoBehaviour
 {
     [SerializeField] private Transform bossSpawnPoint;
+    [SerializeField] private int killsToWin;
+    [SerializeField] private int killsToSpawnBoss;
+    [SerializeField] private GameObject bossPrefab;
     [SerializeField] private PlayerController playerController;
     [SerializeField] private EntityView playerView;
     [SerializeField] private GameOverUI gameOverUI;
-    
+    [SerializeField] private AudioClip gameBackgroundMusic;
+
+
 
     private Player player;
 
     [System.Obsolete]
     private void Awake()
     {
+
         var audioService = GameEntryPoint.Instance?.AudioService;
-        if (audioService != null)
+        if (audioService != null && gameBackgroundMusic != null)
         {
-            AudioClip gameMusic = Resources.Load<AudioClip>("Music/GameBackground"); // Укажи свой путь в Resources
-            if (gameMusic != null)
-                audioService.PlayMusic(gameMusic);
+            audioService.PlayMusic(gameBackgroundMusic);
         }
 
         var damageService = new DamageService();
         var saveService = GameEntryPoint.Instance != null
             ? GameEntryPoint.Instance.SaveService
             : new PlayerPrefsSaveService();
-        
+
 
         IPlayerRepository playerRepo = new PlayerRepository();
         IEnemiesRepository enemiesRepo = new EnemiesRepository();
@@ -36,8 +40,8 @@ public class GameSceneEntryPoint : MonoBehaviour
         var health = new Health(100);
         player = new Player(health, damageService);
 
-        
-       
+
+
 
         playerView.Init(player);
         playerController.Init(player);
@@ -49,17 +53,36 @@ public class GameSceneEntryPoint : MonoBehaviour
         if (playerHealthBar != null)
             playerHealthBar.Init(health);
 
-        foreach (var enemy in FindObjectsOfType<EnemyView>())
-        {
-            var bar = enemy.GetComponentInChildren<HealthBar>();
+        var scoreManager = new ScoreManager(killsToSpawnBoss, killsToWin, bossPrefab, bossSpawnPoint);
 
-            if (bar != null && enemy.Enemy != null)
-                bar.Init(enemy.Enemy.Health);
+        // Инициализируем UI счета
+        var scoreboard = FindObjectOfType<UIScoreboard>();
+        if (scoreboard != null)
+        {
+            scoreboard.Init(scoreManager);
         }
 
+        // Инициализируем UI окончания игры
+        if (gameOverUI != null)
+        {
+            gameOverUI.Init(player, scoreManager);
+        }
+
+
+        var spawner = FindObjectOfType<Spawner>();
+        if (spawner != null)
+        {
+            spawner.OnEnemySpawned += (newEnemy) =>
+            {
+                InitEnemy(newEnemy, scoreManager);
+            };
+        }
+
+        var pauseInput = FindObjectOfType<PauseMenuInput>(true);
         var pauseView = FindObjectOfType<PauseMenuView>(true);
         if (pauseView != null)
-            new PauseMenuController(
+        {
+            PauseMenuController pauseController = new PauseMenuController(
                 pauseView,
                 saveinteractor,
                 loadinteractor,
@@ -67,52 +90,32 @@ public class GameSceneEntryPoint : MonoBehaviour
                 playerController,
                 GameEntryPoint.Instance?.PeacefulModeService);
 
+            if (pauseInput != null)
+                pauseInput.Initialize(pauseController);
 
-        player.OnDeath += () => StartCoroutine(ShowGameOverDelayed());
-
-        if (Bootstrapper.Instance?.ScoreManager != null)
-        {
-            Bootstrapper.Instance.ScoreManager.ResetScore();
-
-            Bootstrapper.Instance.ScoreManager.UpdateSpawnPoint(bossSpawnPoint);
-
-            Bootstrapper.Instance.ScoreManager.OnVictory += ShowVictoryUI;
-        }
-        else
-        {
-            Debug.LogWarning("Bootstrapper или ScoreManager не найдены! Запусти игру со стартовой сцены.");
         }
 
-        
+
     }
-    private IEnumerator ShowGameOverDelayed()
+
+    private void InitEnemy(EnemyView enemy, ScoreManager scoreManager)
     {
-        yield return new WaitForSecondsRealtime(0.5f);
-        if (gameOverUI != null)
+        if (enemy == null) return;
+
+        // Инициализируем полоску здоровья над головой врага
+        var bar = enemy.GetComponentInChildren<HealthBar>();
+        if (bar != null && enemy.Enemy != null)
         {
-            gameOverUI.Show();
-            Cursor.lockState = CursorLockMode.None;
-            Cursor.visible = true;
+            bar.Init(enemy.Enemy.Health);
         }
+
+        // Подписываемся на событие смерти этого конкретного врага
+        enemy.OnDied += (deadEnemy) =>
+        {
+            bool isBoss = deadEnemy.GetComponent<BossTag>() != null;
+            scoreManager.RegisterEnemyDeath(deadEnemy, isBoss);
+        };
     }
 
-    private void ShowVictoryUI()
-    {
-        Cursor.lockState = CursorLockMode.None;
-        Cursor.visible = true;
-        if (gameOverUI != null)
-            gameOverUI.ShowVictory();
 
-        
-        else
-            Debug.LogError("GameOverUI not assigned in GameSceneEntryPoint");
-    }
-    private void OnDestroy()
-    {
-        // Отписываемся ОБОИМИ способами, чтобы точно убрать старую ссылку из вечного ScoreManager
-        if (Bootstrapper.Instance != null && Bootstrapper.Instance.ScoreManager != null)
-        {
-            Bootstrapper.Instance.ScoreManager.OnVictory -= ShowVictoryUI;
-        }
-    }
 }

@@ -2,17 +2,22 @@ using UnityEngine;
 
 public class PauseMenuInput : MonoBehaviour
 {
-    [SerializeField] private PauseMenuView view;
+    private PauseMenuController _controller;
+
+    // —юда мы передаем созданный контроллер (например, из инициализатора сцены игры)
+    public void Initialize(PauseMenuController controller)
+    {
+        _controller = controller;
+    }
 
     void Update()
     {
+        if (_controller == null) return;
+
         if (Input.GetKeyDown(KeyCode.Escape))
         {
-            bool isActive = view.root.activeSelf;
-
-            view.root.SetActive(!isActive);
-            
-            Time.timeScale = isActive ? 1 : 0;
+            // ѕередаем управление в контроллер
+            _controller.TogglePause();
         }
     }
 }

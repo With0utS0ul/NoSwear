@@ -1,9 +1,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using System;
 
 public class Spawner : MonoBehaviour
 {
+    // 1. Создаем событие появления врага
+    public event Action<EnemyView> OnEnemySpawned;
+
     [Header("Enemy Types")]
     [SerializeField] private List<GameObject> enemyPrefabs;
 
@@ -34,14 +38,21 @@ public class Spawner : MonoBehaviour
 
         for (int i = 0; i < totalEnemies; i++)
         {
-            // случайный выбор типа врага из списка
-            GameObject prefab = enemyPrefabs[Random.Range(0, enemyPrefabs.Count)];
+            GameObject prefab = enemyPrefabs[UnityEngine.Random.Range(0, enemyPrefabs.Count)];
             Vector3 spawnPos = GetValidSpawnPosition(usedPositions);
 
             if (spawnPos != Vector3.zero)
             {
-                Instantiate(prefab, spawnPos, Quaternion.identity);
+                // 2. Сохраняем ссылку на только что созданный GameObject
+                GameObject enemyObject = Instantiate(prefab, spawnPos, Quaternion.identity);
                 usedPositions.Add(spawnPos);
+
+                // 3. Находим на нём EnemyView и отправляем через событие наружу
+                EnemyView enemyView = enemyObject.GetComponent<EnemyView>();
+                if (enemyView != null)
+                {
+                    OnEnemySpawned?.Invoke(enemyView);
+                }
             }
             else
             {
@@ -59,13 +70,13 @@ public class Spawner : MonoBehaviour
             Vector3 candidate;
             if (useAreaBounds)
             {
-                float x = Random.Range(areaMin.x, areaMax.x);
-                float z = Random.Range(areaMin.z, areaMax.z);
+                float x = UnityEngine.Random.Range(areaMin.x, areaMax.x);
+                float z = UnityEngine.Random.Range(areaMin.z, areaMax.z);
                 candidate = new Vector3(x, 0, z);
             }
             else
             {
-                Vector2 randomCircle = Random.insideUnitCircle * spawnRadius;
+                Vector2 randomCircle = UnityEngine.Random.insideUnitCircle * spawnRadius;
                 candidate = transform.position + new Vector3(randomCircle.x, 0, randomCircle.y);
             }
 
@@ -92,20 +103,4 @@ public class Spawner : MonoBehaviour
         return Vector3.zero;
     }
 
-    // визуализация зоны спавна в редакторе
-    private void OnDrawGizmosSelected()
-    {
-        if (useAreaBounds)
-        {
-            Gizmos.color = Color.green;
-            Vector3 center = (areaMin + areaMax) / 2;
-            Vector3 size = areaMax - areaMin;
-            Gizmos.DrawWireCube(center, size);
-        }
-        else
-        {
-            Gizmos.color = Color.green;
-            Gizmos.DrawWireSphere(transform.position, spawnRadius);
-        }
-    }
 }

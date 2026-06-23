@@ -1,45 +1,32 @@
 using UnityEngine;
 using UnityEngine.UI;
+using System;
 
 public class SettingsView : MonoBehaviour
 {
     [SerializeField] private Slider volumeSlider;
     [SerializeField] private Button backButton;
 
-    private IAudioService audioService;
+    // События, на которые будет подписываться Контроллер
+    public event Action<float> OnVolumeChanged;
+    public event Action OnBackClicked;
 
-    private void Start()
+    public void Initialize(float initialVolume)
     {
-        audioService = GameEntryPoint.Instance.AudioService;
+        volumeSlider.value = initialVolume;
 
-        // Загружаем сохранённую громкость (опционально)
-        float savedVolume = PlayerPrefs.GetFloat("Volume", 0.5f);
-        volumeSlider.value = savedVolume;
-        audioService.SetVolume(savedVolume);
-
-        volumeSlider.onValueChanged.AddListener(OnVolumeChanged);
-        backButton.onClick.AddListener(OnBack);
+        // Привязываем внутренние UI-колбэки к публичным событиям
+        volumeSlider.onValueChanged.AddListener(TriggerVolumeChanged);
+        backButton.onClick.AddListener(TriggerBackClicked);
     }
 
-    private void OnVolumeChanged(float value)
-    {
-        audioService.SetVolume(value);
-        PlayerPrefs.SetFloat("Volume", value);
-        PlayerPrefs.Save();
-    }
-
-    private void OnBack()
-    {
-        UnityEngine.SceneManagement.SceneManager.LoadScene("MainMenu");
-    }
+    private void TriggerVolumeChanged(float value) => OnVolumeChanged?.Invoke(value);
+    private void TriggerBackClicked() => OnBackClicked?.Invoke();
 
     private void OnDestroy()
     {
-        // Очищаем подписки при уничтожении сцены (хороший тон в архитектуре)
-        if (volumeSlider != null)
-            volumeSlider.onValueChanged.RemoveListener(OnVolumeChanged);
-
-        if (backButton != null)
-            backButton.onClick.RemoveListener(OnBack);
+        // Очищаем подписки UI элементов
+        volumeSlider.onValueChanged.RemoveListener(TriggerVolumeChanged);
+        backButton.onClick.RemoveListener(TriggerBackClicked);
     }
 }

@@ -3,72 +3,88 @@ using UnityEngine.SceneManagement;
 
 public class PauseMenuController
 {
-    private PauseMenuView view;
-    private SaveGameInteractor saveinteractor;
-    private LoadGameInteractor loadinteractor;
-    private Player player;
-    private PlayerController playerController;
-    private IPeacefulModeService peacefulService;
+    private readonly PauseMenuView _view;
+    private readonly SaveGameInteractor _saveInteractor;
+    private readonly LoadGameInteractor _loadInteractor;
+    private readonly Player _player;
+    private readonly PlayerController _playerController;
+    private readonly IPeacefulModeService _peacefulService;
 
     public PauseMenuController(
         PauseMenuView view,
-        SaveGameInteractor saveinteractor,
-        LoadGameInteractor loadinteractor,
+        SaveGameInteractor saveInteractor,
+        LoadGameInteractor loadInteractor,
         Player player,
         PlayerController playerController,
         IPeacefulModeService peacefulService)
     {
-        this.view = view;
-        this.saveinteractor = saveinteractor;
-        this.loadinteractor = loadinteractor;
-        this.player = player;
-        this.playerController = playerController;
-        this.peacefulService = peacefulService;
+        _view = view;
+        _saveInteractor = saveInteractor;
+        _loadInteractor = loadInteractor;
+        _player = player;
+        _playerController = playerController;
+        _peacefulService = peacefulService;
 
-        view.resumeButton.onClick.AddListener(Resume);
-        view.mainMenuButton.onClick.AddListener(Exit);
-        view.saveButton.onClick.AddListener(Save);
-        view.loadButton.onClick.AddListener(Load);
-        if (view.peacefulModeToggle != null && this.peacefulService != null)
+        // Инициализируем начальное состояние тогла
+        if (_peacefulService != null)
         {
-            view.peacefulModeToggle.isOn = this.peacefulService.IsPeaceful;
-            view.peacefulModeToggle.onValueChanged.AddListener(OnPeacefulToggled);
+            _view.SetPeacefulToggleState(_peacefulService.IsPeaceful);
         }
+
+        // Подписываемся на абстрактные события View
+        _view.OnResumeClicked += Resume;
+        _view.OnMainMenuClicked += ExitToMainMenu;
+        _view.OnSaveClicked += Save;
+        _view.OnLoadClicked += Load;
+        _view.OnPeacefulToggled += HandlePeacefulToggled;
     }
 
-    private void OnPeacefulToggled(bool isOn)
+    // Этот метод теперь будет вызываться при нажатии Esc
+    public void TogglePause()
     {
-        peacefulService.IsPeaceful = isOn;
-        Debug.Log("Peaceful mode: " + (isOn ? "ON" : "OFF"));
-       
+        bool targetState = !_view.IsActive;
+        _view.SetActive(targetState);
+        Time.timeScale = targetState ? 0f : 1f;
+    }
+
+    private void HandlePeacefulToggled(bool isOn)
+    {
+        if (_peacefulService != null)
+        {
+            _peacefulService.IsPeaceful = isOn;
+            Debug.Log("Peaceful mode: " + (isOn ? "ON" : "OFF"));
+        }
     }
 
     private void Resume()
     {
-        view.root.SetActive(false);
-        Time.timeScale = 1;
-        
-
-
-
+        _view.SetActive(false);
+        Time.timeScale = 1f;
     }
 
-    private void Exit()
+    private void ExitToMainMenu()
     {
-        Time.timeScale = 1;
+        Time.timeScale = 1f;
+        Dispose(); // Обязательно чистим подписки перед сменой сцены
         SceneManager.LoadScene("MainMenu");
-        
     }
 
     private void Save()
     {
-        saveinteractor.SaveGame(player, playerController);
-        
+        _saveInteractor.SaveGame(_player, _playerController);
     }
 
     private void Load()
     {
-        loadinteractor.LoadGame(player, playerController);
-        
+        _loadInteractor.LoadGame(_player, _playerController);
+    }
+
+    public void Dispose()
+    {
+        _view.OnResumeClicked -= Resume;
+        _view.OnMainMenuClicked -= ExitToMainMenu;
+        _view.OnSaveClicked -= Save;
+        _view.OnLoadClicked -= Load;
+        _view.OnPeacefulToggled -= HandlePeacefulToggled;
     }
 }

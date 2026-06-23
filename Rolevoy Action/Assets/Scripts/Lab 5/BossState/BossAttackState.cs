@@ -65,7 +65,7 @@ public class BossAttackState : IState
                 return;
             }
 
-            // --- ИЗМЕНЕНИЕ: проверка готовности дальнего боя ---
+            // роверка готовности дальнего боя
             if (context.bossCombatController?.CurrentProfile?.weaponType == BossWeaponType.Ranged)
             {
                 if (context.bossCombatController.CanDoRangedAttack())
@@ -75,17 +75,17 @@ public class BossAttackState : IState
                         context.animator.PlayAttack();
                     lastAttackTime = Time.time; // обновляем, только если была реальная атака
                 }
-                // иначе ничего не делаем, ждём следующего кадра
+                
             }
             else
             {
-                // ближний бой – как обычно
+                // ближний бой
                 context.bossCombatController?.PerformAttack(context.player);
                 if (context.animator != null)
                     context.animator.PlayAttack();
                 lastAttackTime = Time.time;
             }
-            // --- КОНЕЦ ИЗМЕНЕНИЯ ---
+           
         }
     }
 
