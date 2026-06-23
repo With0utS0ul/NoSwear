@@ -11,7 +11,6 @@ public class AudioService : IAudioService
         GameObject.DontDestroyOnLoad(go);
 
 
-        // Включаем зацикливание для фоновой музыки
         source.loop = true;
 
         // При старте игры загружаем сохраненную громкость (если её нет, то 0.5f по дефолту)

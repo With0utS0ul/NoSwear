@@ -3,28 +3,25 @@ using UnityEngine;
 public class MainMenuEntryPoint : MonoBehaviour
 {
     [SerializeField] private MainMenuView view;
+    [SerializeField] private AudioClip gameBackgroundMusic;
+
+    private MainMenuController _controller;
 
     private void Awake()
     {
-        new MainMenuController(view);
+        _controller = new MainMenuController(view);
 
         var audioService = GameEntryPoint.Instance?.AudioService;
-        if (audioService != null)
+        if (audioService != null && gameBackgroundMusic != null)
         {
-            AudioClip gameMusic = Resources.Load<AudioClip>("Music/GameBackground"); // ”кажи свой путь в Resources
-            if (gameMusic != null)
-                audioService.PlayMusic(gameMusic);
+            audioService.PlayMusic(gameBackgroundMusic);
         }
     }
 
-    private void Start()
+    private void OnDestroy()
     {
-        var audioService = GameEntryPoint.Instance?.AudioService;
-        if (audioService != null)
-        {
-            AudioClip menuMusic = Resources.Load<AudioClip>("Music/MenuBackground"); // ”кажи свой путь
-            if (menuMusic != null)
-                audioService.PlayMusic(menuMusic);
-        }
+        _controller?.Dispose();
     }
+
+
 }

@@ -20,10 +20,10 @@ public class EnemyStateMachineAI : MonoBehaviour
         }
 
         stateMachine = new StateMachine();
-        // Áîëüøå íå ñîõðàíÿåì StateMachine â êîíòåêñòå
+        
         isBoss = GetComponent<BossTag>() != null;
 
-        // Èíèöèàëèçàöèÿ êîìïîíåíòîâ (îñòàâëÿåì áåç èçìåíåíèé)
+        // ������������� �����������
         context.agent = context.agent ?? GetComponent<NavMeshAgent>() ?? GetComponentInParent<NavMeshAgent>() ?? GetComponentInChildren<NavMeshAgent>();
         context.enemyView = context.enemyView ?? GetComponent<EnemyView>() ?? GetComponentInParent<EnemyView>() ?? GetComponentInChildren<EnemyView>();
         context.animator = context.animator ?? GetComponent<EnemyAnimator>() ?? GetComponentInParent<EnemyAnimator>() ?? GetComponentInChildren<EnemyAnimator>();
@@ -105,7 +105,7 @@ public class EnemyStateMachineAI : MonoBehaviour
     public bool IsBoss => isBoss;
     public bool IsAggro => isAggro;
     public StateMachine GetStateMachine() => stateMachine;
-    public IEnemyStateFactory StateFactory => stateFactory; // äîñòóï äëÿ ñîñòîÿíèé, åñëè íóæíî
+    public IEnemyStateFactory StateFactory => stateFactory; 
 
     private Transform ResolvePlayerTransform()
     {

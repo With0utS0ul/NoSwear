@@ -5,13 +5,13 @@ public class AttackProfile : ScriptableObject
 {
     public string profileName;
     public bool isMelee = true;
-    public float damage = 10f;        // ìîæíî èñïîëüçîâàòü äëÿ èçìåíåíèÿ óðîíà
-    public float cooldown = 1.5f;     // îïöèîíàëüíî
+    public float damage = 10f;
+    public float cooldown = 1.5f;
 
 
     [Header("Combat Distances")]
-    public float range = 2f;           // äàëüíîñòü àòàêè
-    public float optimalDistance = 7f; // îïòèìàëüíàÿ äèñòàíöèÿ äëÿ ranged
+    public float range = 2f;
+    public float optimalDistance = 7f; // ����������� ��������� ��� ranged
 
 
     [Header("Effects")]

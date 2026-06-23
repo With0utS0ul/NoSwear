@@ -4,15 +4,14 @@ using UnityEngine.UI;
 public class UIScoreboard : MonoBehaviour
 {
     [SerializeField] private Text scoreText;
+    private ScoreManager _scoreManager;
 
-    private void Start()
+    
+    public void Init(ScoreManager scoreManager)
     {
-        var scoreManager = Bootstrapper.Instance?.ScoreManager;
-        if (scoreManager != null)
-        {
-            scoreManager.OnScoreChanged += UpdateScore;
-            UpdateScore(scoreManager.GetCurrentKills());
-        }
+        _scoreManager = scoreManager;
+        _scoreManager.OnScoreChanged += UpdateScore;
+        UpdateScore(_scoreManager.GetCurrentKills());
     }
 
     private void UpdateScore(int kills)
@@ -23,8 +22,7 @@ public class UIScoreboard : MonoBehaviour
 
     private void OnDestroy()
     {
-        var scoreManager = Bootstrapper.Instance?.ScoreManager;
-        if (scoreManager != null)
-            scoreManager.OnScoreChanged -= UpdateScore;
+        if (_scoreManager != null)
+            _scoreManager.OnScoreChanged -= UpdateScore;
     }
 }

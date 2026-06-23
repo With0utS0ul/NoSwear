@@ -24,7 +24,7 @@ public class EnemyWeaponHandler : MonoBehaviour
         if (currentWeapon.attackSound != null)
             AudioSource.PlayClipAtPoint(currentWeapon.attackSound, context.transform.position);
 
-        // Ýôôåêò äóëüíîãî âñïëåñêà äëÿ äàëüíåãî îðóæèÿ
+        // ������ ��� �������� ������
         if (!currentWeapon.isMelee && currentWeapon.muzzleFlashPrefab != null)
             Instantiate(currentWeapon.muzzleFlashPrefab, context.transform.position, Quaternion.identity);
 

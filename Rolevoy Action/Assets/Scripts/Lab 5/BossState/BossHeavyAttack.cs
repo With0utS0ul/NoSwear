@@ -36,7 +36,7 @@ public class BossHeavyAttack : BossAttackState
 
         if (Time.time >= lastAttackTime + HeavyCooldown)
         {
-            // --- ИЗМЕНЕНИЕ: поддержка ranged с проверкой готовности ---
+            // поддержка ranged с проверкой готовности 
             if (context.bossCombatController?.CurrentProfile?.weaponType == BossWeaponType.Ranged)
             {
                 if (context.bossCombatController.CanDoRangedAttack())

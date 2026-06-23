@@ -53,11 +53,22 @@ public class ScoreManager
     {
         if (bossPrefab != null && bossSpawnPoint != null)
         {
-            // Статический вызов Instantiate
-            UnityEngine.Object.Instantiate(bossPrefab, bossSpawnPoint.position, bossSpawnPoint.rotation);
+            // Сохраняем ссылку на созданный объект босса
+            GameObject bossObj = UnityEngine.Object.Instantiate(bossPrefab, bossSpawnPoint.position, bossSpawnPoint.rotation);
             bossSpawned = true;
             OnBossSpawned?.Invoke();
             Debug.Log("Boss spawned!");
+
+            // Находим его EnemyView и подписываемся на его смерть
+            EnemyView bossView = bossObj.GetComponent<EnemyView>();
+            if (bossView != null)
+            {
+                bossView.OnDied += (deadBoss) =>
+                {
+                    // Вызываем регистрацию смерти для самого себя (true означает, что это босс)
+                    RegisterEnemyDeath(deadBoss, isBoss: true);
+                };
+            }
         }
         else
         {

@@ -9,6 +9,9 @@ public class GameOverUI : MonoBehaviour
     [SerializeField] private Button restartButton;
     [SerializeField] private Button mainMenuButton;
 
+    private Player player;
+    private ScoreManager scoreManager;
+
     private void Start()
     {
         panel.SetActive(false);
@@ -16,27 +19,42 @@ public class GameOverUI : MonoBehaviour
         mainMenuButton.onClick.AddListener(GoToMainMenu);
     }
 
-    public void Show()
+   
+    public void Init(Player player, ScoreManager scoreManager)
     {
-        Debug.Log("GameOverUI.Show() called");
-        if (panel == null) Debug.LogError("panel is null");
-        else
-        {
-            panel.SetActive(true);
-            Debug.Log("panel active = " + panel.activeSelf);
-        }
-        Time.timeScale = 0;
+        this.player = player;
+        this.scoreManager = scoreManager;
+
+        if (this.player != null)
+            this.player.OnDeath += ShowGameOver;
+
+        if (this.scoreManager != null)
+            this.scoreManager.OnVictory += ShowVictory;
+    }
+    private void OnDestroy()
+    {
+        // Обязательно отписываемся, чтобы избежать утечек памяти
+        if (player != null)
+            player.OnDeath -= ShowGameOver;
+
+        if (scoreManager != null)
+            scoreManager.OnVictory -= ShowVictory;
+    }
+
+    public void ShowGameOver()
+    {
+        SetPanelActive(true);
     }
 
     private void Restart()
     {
-        Time.timeScale = 1;
+        SetPanelActive(false);
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
     private void GoToMainMenu()
     {
-        Time.timeScale = 1;
+        SetPanelActive(false);
         SceneManager.LoadScene("MainMenu");
     }
 
@@ -46,7 +64,23 @@ public class GameOverUI : MonoBehaviour
         var text = panel.GetComponentInChildren<TMP_Text>();
         if (text != null) text.text = "VICTORY!";
 
-        panel.SetActive(true);
-        Time.timeScale = 0;
+        SetPanelActive(true);
+    }
+
+    private void SetPanelActive(bool isActive)
+    {
+        if (panel != null)
+            panel.SetActive(isActive);
+
+        if (isActive)
+        {
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+            Time.timeScale = 0;
+        }
+        else
+        {
+            Time.timeScale = 1;
+        }
     }
 }

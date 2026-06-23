@@ -1,3 +1,4 @@
+using System;
 using System.Runtime.InteropServices;
 using UnityEngine;
 
@@ -18,6 +19,8 @@ public class EnemyView : MonoBehaviour
     [SerializeField] private float rangedDamage = 10f;
     [SerializeField] private float hitReactionCooldown = 0.25f;
     [SerializeField] private float speed = 1f;
+
+    public event Action<EnemyView> OnDied;
 
     private Animator animator;
     private float lastHitReactionTime = -999f;
@@ -56,7 +59,7 @@ public class EnemyView : MonoBehaviour
                     
                 }
                 bool isBoss = GetComponent<BossTag>() != null;
-                Bootstrapper.Instance?.ScoreManager?.RegisterEnemyDeath(this, isBoss);
+                OnDied?.Invoke(this);
 
                 Destroy(gameObject, 1.0f);
             }
