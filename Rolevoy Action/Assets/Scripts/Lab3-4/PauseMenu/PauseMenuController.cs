@@ -24,14 +24,11 @@ public class PauseMenuController
         _player = player;
         _playerController = playerController;
         _peacefulService = peacefulService;
-
-        // Инициализируем начальное состояние тогла
         if (_peacefulService != null)
         {
             _view.SetPeacefulToggleState(_peacefulService.IsPeaceful);
         }
 
-        // Подписываемся на абстрактные события View
         _view.OnResumeClicked += Resume;
         _view.OnMainMenuClicked += ExitToMainMenu;
         _view.OnSaveClicked += Save;
@@ -39,7 +36,6 @@ public class PauseMenuController
         _view.OnPeacefulToggled += HandlePeacefulToggled;
     }
 
-    // Этот метод теперь будет вызываться при нажатии Esc
     public void TogglePause()
     {
         bool targetState = !_view.IsActive;
@@ -65,7 +61,7 @@ public class PauseMenuController
     private void ExitToMainMenu()
     {
         Time.timeScale = 1f;
-        Dispose(); // Обязательно чистим подписки перед сменой сцены
+        Dispose();
         SceneManager.LoadScene("MainMenu");
     }
 

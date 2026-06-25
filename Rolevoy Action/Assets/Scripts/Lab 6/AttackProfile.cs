@@ -11,7 +11,7 @@ public class AttackProfile : ScriptableObject
 
     [Header("Combat Distances")]
     public float range = 2f;
-    public float optimalDistance = 7f; // ����������� ��������� ��� ranged
+    public float optimalDistance = 7f;
 
 
     [Header("Effects")]

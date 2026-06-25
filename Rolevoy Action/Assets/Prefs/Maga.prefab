@@ -1365,6 +1365,7 @@ MonoBehaviour:
   projectilePrefab: {fileID: 5316625051857118284, guid: 74c3ce446c5a60d44817669e6692314c, type: 3}
   rangedDamage: 10
   hitReactionCooldown: 0.25
+  speed: 1
 --- !u!114 &8573250718510292955
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1372,7 +1373,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 996786132308814127}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4acd27bab8cd827468830c7e0f939bab, type: 3}
   m_Name: 
@@ -1412,6 +1413,8 @@ MonoBehaviour:
   minRoamDistance: 5
   maxRoamDistance: 15
   reachedRoamPointDistance: 1
+  attackHandler: {fileID: 0}
+  bossCombatController: {fileID: 0}
 --- !u!114 &5014478097114364136
 MonoBehaviour:
   m_ObjectHideFlags: 0

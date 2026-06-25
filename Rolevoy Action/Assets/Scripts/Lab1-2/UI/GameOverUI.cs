@@ -26,7 +26,7 @@ public class GameOverUI : MonoBehaviour
         this.scoreManager = scoreManager;
 
         if (this.player != null)
-            this.player.OnDeath += ShowGameOver;
+            this.player.Health.OnDeath += ShowGameOver;
 
         if (this.scoreManager != null)
             this.scoreManager.OnVictory += ShowVictory;
@@ -35,7 +35,7 @@ public class GameOverUI : MonoBehaviour
     {
         // Обязательно отписываемся, чтобы избежать утечек памяти
         if (player != null)
-            player.OnDeath -= ShowGameOver;
+            player.Health.OnDeath -= ShowGameOver;
 
         if (scoreManager != null)
             scoreManager.OnVictory -= ShowVictory;

@@ -105,8 +105,6 @@ public class ScoreManager
         currentKills = 0;
         bossSpawned = false;
         victoryTriggered = false;
-
-        // Оповещаем UI, что счет теперь равен 0
         OnScoreChanged?.Invoke(currentKills);
     }
 }

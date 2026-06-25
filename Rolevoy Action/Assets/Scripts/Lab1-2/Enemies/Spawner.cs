@@ -5,7 +5,6 @@ using System;
 
 public class Spawner : MonoBehaviour
 {
-    // 1. —оздаем событие по€влени€ врага
     public event Action<EnemyView> OnEnemySpawned;
 
     [Header("Enemy Types")]
@@ -43,11 +42,8 @@ public class Spawner : MonoBehaviour
 
             if (spawnPos != Vector3.zero)
             {
-                // 2. —охран€ем ссылку на только что созданный GameObject
                 GameObject enemyObject = Instantiate(prefab, spawnPos, Quaternion.identity);
                 usedPositions.Add(spawnPos);
-
-                // 3. Ќаходим на нЄм EnemyView и отправл€ем через событие наружу
                 EnemyView enemyView = enemyObject.GetComponent<EnemyView>();
                 if (enemyView != null)
                 {
@@ -66,7 +62,6 @@ public class Spawner : MonoBehaviour
         int attempts = 30;
         for (int i = 0; i < attempts; i++)
         {
-            // получаем кандидат в зависимости от режима
             Vector3 candidate;
             if (useAreaBounds)
             {
@@ -80,12 +75,10 @@ public class Spawner : MonoBehaviour
                 candidate = transform.position + new Vector3(randomCircle.x, 0, randomCircle.y);
             }
 
-            // ищем ближайшую точку на NavMesh
             if (NavMesh.SamplePosition(candidate, out NavMeshHit hit, 5f, NavMesh.AllAreas))
             {
                 Vector3 finalPos = hit.position;
 
-                // провер€ем рассто€ние до уже созданных врагов
                 bool tooClose = false;
                 foreach (var pos in existingPositions)
                 {

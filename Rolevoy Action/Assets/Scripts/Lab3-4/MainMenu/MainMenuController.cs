@@ -9,7 +9,7 @@ public class MainMenuController
     {
         _view = view;
 
-        // Подписываемся на абстрактные события логики, а не на элементы UI
+        // Подписываемся на абстрактные события логики
         _view.OnPlayClicked += HandlePlay;
         _view.OnSettingsClicked += HandleSettings;
         _view.OnExitClicked += HandleExit;

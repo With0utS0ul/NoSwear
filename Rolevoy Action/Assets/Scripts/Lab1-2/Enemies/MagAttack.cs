@@ -13,7 +13,7 @@ public class MagAttack : MonoBehaviour
     public bool CanAttack { get; private set; } = true;
     private float lastAttackTime;
 
-    private EnemyView enemyView; // получаем урон 
+    private EnemyView enemyView;
 
     public float CoolDown => coolDown;
 
@@ -40,12 +40,10 @@ public class MagAttack : MonoBehaviour
             if (projectile != null)
             {
                 Vector3 direction = (playerTransform.position - firePoint.position).normalized;
-                // ”рон берЄм из EnemyView (через Enemy.EnemyAttack или напр€мую)
                 float damage = GetDamageFromEnemyView();
                 projectile.Init(direction, currentProjectileSpeed, DamageType.Magical, damage);
                 projectileObj.tag = "EnemyProjectile";
 
-                // ÷вет снар€да (только визуал)
                 Renderer rend = projectileObj.GetComponent<Renderer>();
                 if (rend != null)
                     rend.material.color = currentProjectileColor;

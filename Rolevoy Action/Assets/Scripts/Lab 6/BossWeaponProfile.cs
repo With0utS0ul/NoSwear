@@ -15,7 +15,7 @@ public class BossWeaponProfile : ScriptableObject
 
     
     [Header("Boss Body Material")]
-    public Material bodyMaterial;   // ГҐГ±Г«ГЁ Г­ГҐ null, ГЎГіГ¤ГҐГІ ГЇГ°ГЁГ¬ГҐГ­ВёГ­ ГЄ Г¬Г®Г¤ГҐГ«ГЁ ГЎГ®Г±Г±Г 
+    public Material bodyMaterial;   // если не null, будет применён к модели босса
     
 
     [Header("Attack Visuals & Audio")]

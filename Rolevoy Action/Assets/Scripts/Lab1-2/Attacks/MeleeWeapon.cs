@@ -8,12 +8,19 @@ public class MeleeWeapon : MonoBehaviour
     [SerializeField] private Collider triggerCollider;
 
     private Player owner;
+    private IDamageService _damageService;
+
+
 
     private void Awake()
     {
         if (triggerCollider == null) triggerCollider = GetComponent<Collider>();
         triggerCollider.isTrigger = true;
         triggerCollider.enabled = false;
+
+        _damageService = GameEntryPoint.Instance?.DamageService;
+
+        
     }
 
     public void SetOwner(Player player) => owner = player;
@@ -44,12 +51,9 @@ public class MeleeWeapon : MonoBehaviour
             else
                 dmg.Magical = damage;
 
-            damageable.ApplyDamage(dmg);
+           
+            _damageService.DealDamage(damageable, dmg);
         }
-        if (damageable == null)
-        {
-            Debug.Log("NO DAMAGEABLE FOUND!");
-            return;
-        }
+        
     }
 }

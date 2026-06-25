@@ -9,6 +9,7 @@ public class EnemyAttack : MonoBehaviour
     [SerializeField] private DamageType damageType = DamageType.Physical;
     [SerializeField] private Collider attackTrigger;
 
+    
     private float timer;
     public bool CanAttack { get; private set; } = true;
     public float AttackRange => attackRange;

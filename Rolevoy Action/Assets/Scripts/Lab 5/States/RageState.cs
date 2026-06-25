@@ -13,7 +13,6 @@ public class RageState : IState
     public void Enter()
     {
         originalAttackCooldown = 0.5f;
-        // ëîãèêà èçìåíåíèÿ êóëäàóíà
     }
 
     public void Update() { }

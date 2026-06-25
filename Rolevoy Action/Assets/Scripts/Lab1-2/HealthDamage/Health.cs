@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using System;
 
 public class Health : IHealth
@@ -20,27 +20,23 @@ public class Health : IHealth
     public void Take(float value)
     {
 
-        if (isDead) return;
+        if (isDead || value <= 0) return;
 
-        Current -= value;
-        if (Current < 0) Current = 0;
+        OnDamage?.Invoke();
+
+        Current = Mathf.Max(Current - value, 0);
         OnHealthChanged?.Invoke(Current);
 
-        if (Current <= 0 && !isDead)
+        if (Current <= 0)
         {
-            
-            
             isDead = true;
             OnDeath?.Invoke();
-
         }
-
-        if (Current > 0)
-            OnDamage?.Invoke();
     }
 
     public void Heal(float value)
     {
+        if (isDead || value <= 0) return; 
         Current = Mathf.Min(Current + value, Max);
         OnHealthChanged?.Invoke(Current);
     }

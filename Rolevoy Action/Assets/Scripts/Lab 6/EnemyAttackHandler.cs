@@ -11,7 +11,6 @@ public class EnemyAttackHandler : MonoBehaviour
     public void SetProfile(AttackProfile profile)
     {
         currentProfile = profile;
-        // Выбираем команду один раз при смене профиля – без if в Update
         currentAttackCommand = profile.isMelee ? new MeleeAttackCommand() : new RangedAttackCommand();
     }
 
@@ -25,7 +24,6 @@ public class EnemyAttackHandler : MonoBehaviour
         currentAttackCommand.Execute(context, target);
         lastAttackTime = Time.time;
 
-        // Визуальные эффекты и звук (общие для всех атак)
         if (currentProfile.attackSound != null)
             AudioSource.PlayClipAtPoint(currentProfile.attackSound, context.transform.position);
 
@@ -35,11 +33,8 @@ public class EnemyAttackHandler : MonoBehaviour
             Instantiate(currentProfile.attackVfxPrefab, vfxPos, Quaternion.identity);
         }
 
-        // Дополнительная настройка для дальних атак (применяем профиль к MagAttack)
         if (!currentProfile.isMelee && context.rangedAttack != null)
             context.rangedAttack.ApplyProfile(currentProfile);
-
-        // Анимация
         if (context.animator != null)
             context.animator.PlayAttack();
     }

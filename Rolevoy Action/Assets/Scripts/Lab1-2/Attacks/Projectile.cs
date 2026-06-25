@@ -11,11 +11,16 @@ public class Projectile : MonoBehaviour
     private DamageType damageType;
     private Vector3 direction;
 
+    private IDamageService _damageService;
+
     public void Init(Vector3 dir, float dmg, DamageType type, float speed) 
     {
         direction = dir.normalized;
         damage = dmg;
         damageType = type;
+
+        _damageService = GameEntryPoint.Instance?.DamageService;
+
         Destroy(gameObject, lifetime);
     }
 
@@ -35,7 +40,8 @@ public class Projectile : MonoBehaviour
                 Damage dmg = new Damage();
                 if (damageType == DamageType.Physical) dmg.Physical = damage;
                 else dmg.Magical = damage;
-                damageable.ApplyDamage(dmg);
+                //damageable.ApplyDamage(dmg);
+                _damageService.DealDamage(damageable, dmg);
             }
             Destroy(gameObject);
         }

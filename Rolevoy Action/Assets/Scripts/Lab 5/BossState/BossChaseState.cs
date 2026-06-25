@@ -44,7 +44,7 @@ public class BossChaseState : IState
 
         if (dist <= stopDistance)
         {
-            context.StateMachine.ChangeState(new BossAttackState(context, ai));
+            ai.GetStateMachine().ChangeState(new BossAttackState(context, ai));
             return;
         }
 

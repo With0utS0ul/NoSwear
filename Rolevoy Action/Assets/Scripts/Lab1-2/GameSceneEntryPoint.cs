@@ -13,7 +13,6 @@ public class GameSceneEntryPoint : MonoBehaviour
     [SerializeField] private AudioClip gameBackgroundMusic;
 
 
-
     private Player player;
 
     [System.Obsolete]
