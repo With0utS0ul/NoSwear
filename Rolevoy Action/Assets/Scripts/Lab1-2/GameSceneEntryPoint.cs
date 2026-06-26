@@ -54,14 +54,12 @@ public class GameSceneEntryPoint : MonoBehaviour
 
         var scoreManager = new ScoreManager(killsToSpawnBoss, killsToWin, bossPrefab, bossSpawnPoint);
 
-        // Инициализируем UI счета
         var scoreboard = FindObjectOfType<UIScoreboard>();
         if (scoreboard != null)
         {
             scoreboard.Init(scoreManager);
         }
 
-        // Инициализируем UI окончания игры
         if (gameOverUI != null)
         {
             gameOverUI.Init(player, scoreManager);
@@ -100,15 +98,12 @@ public class GameSceneEntryPoint : MonoBehaviour
     private void InitEnemy(EnemyView enemy, ScoreManager scoreManager)
     {
         if (enemy == null) return;
-
-        // Инициализируем полоску здоровья над головой врага
         var bar = enemy.GetComponentInChildren<HealthBar>();
         if (bar != null && enemy.Enemy != null)
         {
             bar.Init(enemy.Enemy.Health);
         }
 
-        // Подписываемся на событие смерти этого конкретного врага
         enemy.OnDied += (deadEnemy) =>
         {
             bool isBoss = deadEnemy.GetComponent<BossTag>() != null;

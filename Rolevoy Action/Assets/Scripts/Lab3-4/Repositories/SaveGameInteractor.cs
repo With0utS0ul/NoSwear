@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class SaveGameInteractor : MonoBehaviour
+public class SaveGameInteractor 
 {
     private readonly IPlayerRepository playerRepository;
     private readonly IEnemiesRepository enemiesRepository;

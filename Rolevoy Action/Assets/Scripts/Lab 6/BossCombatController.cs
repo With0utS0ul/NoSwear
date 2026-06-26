@@ -61,8 +61,6 @@ public class BossCombatController : MonoBehaviour
             Debug.LogWarning("Cannot apply profile: missing profile or material");
             return;
         }
-
-        // Оружие и щит
         Material newWeaponMat = Instantiate(CurrentProfile.weaponMaterial);
         if (weaponRenderer != null)
         {
@@ -83,8 +81,6 @@ public class BossCombatController : MonoBehaviour
             Debug.Log($"Body material changed to {CurrentProfile.bodyMaterial.name}");
         }
         
-
-        // Настройка дальнего боя
         if (magAttack != null && CurrentProfile.projectilePrefab != null)
             magAttack.ApplyBossProfile(CurrentProfile);
     }

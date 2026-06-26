@@ -33,7 +33,6 @@ public class GameOverUI : MonoBehaviour
     }
     private void OnDestroy()
     {
-        // Обязательно отписываемся, чтобы избежать утечек памяти
         if (player != null)
             player.Health.OnDeath -= ShowGameOver;
 
@@ -60,7 +59,6 @@ public class GameOverUI : MonoBehaviour
 
     public void ShowVictory()
     {
-        // Меняем текст, если есть
         var text = panel.GetComponentInChildren<TMP_Text>();
         if (text != null) text.text = "VICTORY!";
 
